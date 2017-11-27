@@ -5,6 +5,7 @@ import com.ptsecurity.libprotection.injections.languages.RegexTokenDefinition
 import com.ptsecurity.libprotection.injections.languages.TokenType
 
 object FilePath : RegexLanguageProvider() {
+    override val name = "FilePath"
     private val disallowedSymbols = """<>:""/\\\|\?\*\x00-\x1f""";
     override val errorTokenType = FilePathTokenType.Error
     override val tokenDefinitions = arrayListOf(

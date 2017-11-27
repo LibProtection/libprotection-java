@@ -1,6 +1,7 @@
 package com.ptsecurity.libprotection.injections.languages
 
 abstract class LanguageProvider {
+    abstract val name: String
     abstract fun tokenize(text: String, offset: Int = 0): Collection<Token>
 
     open fun trySanitize(text: String, context: Token) =

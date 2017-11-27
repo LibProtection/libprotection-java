@@ -7,6 +7,7 @@ import com.ptsecurity.libprotection.injections.languages.TokenType
 import java.net.URLEncoder
 
 object Url : RegexLanguageProvider() {
+    override val name = "Url"
     override val errorTokenType = UrlTokenType.Error
     override val tokenDefinitions = arrayListOf(
             RegexTokenDefinition("""[^:/?#]+:""", UrlTokenType.Scheme),
@@ -23,7 +24,7 @@ object Url : RegexLanguageProvider() {
             var lowerBound = token.range.lowerBound
             when (token.type as UrlTokenType) {
                 UrlTokenType.AuthorityCtx -> {
-                    tokenText = tokenText.substring(2, tokenText.length - 2)
+                    tokenText = tokenText.substring(2, tokenText.length)
                     lowerBound += 2
                     res.addAll(splitToken(tokenText, lowerBound, ":@", UrlTokenType.AuthorityEntry))
                 }
@@ -56,15 +57,19 @@ object Url : RegexLanguageProvider() {
                 if (sb.isNotEmpty()) {
                     val tokenText = sb.toString()
                     sb = StringBuilder()
-                    val upperBound = lowerBound + tokenText.length - 1
+                    val upperBound = lowerBound + tokenText.length
                     res.add(createToken(tokenType, lowerBound, upperBound, tokenText))
-                    lowerBound = upperBound + 2
-                } else lowerBound++
-            } else sb.append(c)
+                    lowerBound = upperBound + 1
+                } else {
+                    lowerBound++
+                }
+            } else {
+                sb.append(c)
+            }
         }
         if (sb.isNotEmpty()) {
             val lastTokenText = sb.toString()
-            res.add(createToken(tokenType, lowerBound, lowerBound + lastTokenText.length - 1, lastTokenText))
+            res.add(createToken(tokenType, lowerBound, lowerBound + lastTokenText.length, lastTokenText))
         }
         return res
     }

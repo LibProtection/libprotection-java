@@ -7,6 +7,7 @@ import com.ptsecurity.libprotection.injections.languages.TokenType
 import org.antlr.v4.runtime.ANTLRInputStream
 
 object Sql : AntlrLanguageProvider() {
+    override val name = "Sql"
     override fun convertAntlrTokenType(antlrTokenType: Int) =
             SqlTokenType.fromInt(antlrTokenType) ?: throw IllegalArgumentException("Unexpected token type: $antlrTokenType")
 

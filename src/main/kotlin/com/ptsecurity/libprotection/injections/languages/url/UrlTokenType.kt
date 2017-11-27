@@ -2,7 +2,7 @@ package com.ptsecurity.libprotection.injections.languages.url
 
 import com.ptsecurity.libprotection.injections.languages.TokenType
 
-internal enum class UrlTokenType: TokenType {
+enum class UrlTokenType: TokenType {
     Error,
     Scheme,
     AuthorityEntry,

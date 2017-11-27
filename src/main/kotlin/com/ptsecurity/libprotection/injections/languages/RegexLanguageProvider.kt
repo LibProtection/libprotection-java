@@ -11,19 +11,17 @@ abstract class RegexLanguageProvider : LanguageProvider() {
             var isMatched = false
             for (tokenDefinition in tokenDefinitions) {
                 val matchResult = tokenDefinition.tryMatch(remainingText)
-                if (matchResult != null) {
+                if (matchResult != null && matchResult.value.isNotEmpty()) {
                     isMatched = true
-                    val matchedLength = matchResult.range.endInclusive - matchResult.range.start
-                    assert(matchedLength != 0)
                     val tokenText = matchResult.value
                     val token = createToken(
                             tokenDefinition.type,
                             currentPosition + offset,
-                            currentPosition + offset + tokenText.length - 1,
+                            currentPosition + offset + tokenText.length,
                             tokenText
                     )
-                    remainingText = remainingText.substring(matchedLength)
-                    currentPosition += matchedLength
+                    remainingText = remainingText.substring(matchResult.value.length)
+                    currentPosition += matchResult.value.length
                     res.add(token)
                     break
                 }
@@ -36,6 +34,8 @@ abstract class RegexLanguageProvider : LanguageProvider() {
                         currentPosition + offset,
                         remainingText.substring(0, 1)
                 )
+                remainingText = remainingText.substring(1)
+                currentPosition++
                 res.add(token)
             }
         }

@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.ANTLRInputStream
 import org.owasp.encoder.Encode
 
 object Html : AntlrLanguageProvider() {
+    override val name = "Html"
     private enum class HtmlTokenizerContext {
         Insignificant,
         EventName,

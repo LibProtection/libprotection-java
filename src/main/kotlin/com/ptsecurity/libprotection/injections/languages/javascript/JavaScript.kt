@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.ANTLRInputStream
 import org.apache.commons.lang3.StringEscapeUtils
 
 object JavaScript : AntlrLanguageProvider() {
+    override val name = "JavaScript"
     override fun trySanitize(text: String, context: Token) =
             if (context.languageProvider is JavaScript) tryJavaScriptEncode(text, context.type as JavaScriptTokenType)
             else throw IllegalArgumentException("Unsupported JavaScript island: $context")

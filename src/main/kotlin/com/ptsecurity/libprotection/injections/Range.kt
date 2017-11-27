@@ -7,5 +7,5 @@ class Range(val lowerBound: Int, val upperBound: Int) {
     fun overlaps(r: Range) = lowerBound >= r.lowerBound && upperBound <= r.upperBound
             || contains(r.lowerBound) || contains(r.upperBound)
 
-    override fun toString() = "$lowerBound..$upperBound"
+    override fun toString() = "$lowerBound..${upperBound - 1}"
 }
