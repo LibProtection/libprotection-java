@@ -12,7 +12,7 @@ abstract class AntlrLanguageProvider : LanguageProvider() {
             res.add(createToken(
                     convertAntlrTokenType(token.type),
                     token.startIndex + offset,
-                    token.stopIndex + offset,
+                    token.stopIndex + offset + 1,
                     token.text
             ))
             token = lexer.nextToken()

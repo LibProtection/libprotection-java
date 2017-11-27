@@ -81,7 +81,9 @@ object Html : AntlrLanguageProvider() {
                 // `</script>` or `</>` case
                 // Remove trailing tag
                 var closingTagIndex = htmlToken.text.length - 2
-                while (htmlToken.text.substring(closingTagIndex, 2) != "</" && closingTagIndex >= 0) closingTagIndex--
+                while (htmlToken.text.substring(closingTagIndex, closingTagIndex + 2) != "</" && closingTagIndex >= 0) {
+                    closingTagIndex--
+                }
                 val islandText = if (closingTagIndex >= 0) htmlToken.text.substring(0, closingTagIndex)
                 else htmlToken.text
                 IslandDto(JavaScript, htmlToken.range.lowerBound, islandText)

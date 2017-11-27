@@ -95,6 +95,8 @@ class TokenizationTests {
 
         val expectedTokens = readFile("$caseFileName.tokens").lines().toList()
 
+        obtainedTokens.forEach { println(it) }
+
         assertEquals(expectedTokens, obtainedTokens)
     }
 
