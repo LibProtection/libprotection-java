@@ -1,9 +1,9 @@
-package com.ptsecurity.libprotection.injections.languages.sql
+package org.librpotection.injections.languages.sql
 
 import SQLLexer
-import com.ptsecurity.libprotection.injections.languages.AntlrLanguageProvider
-import com.ptsecurity.libprotection.injections.languages.Token
-import com.ptsecurity.libprotection.injections.languages.TokenType
+import org.librpotection.injections.languages.AntlrLanguageProvider
+import org.librpotection.injections.languages.Token
+import org.librpotection.injections.languages.TokenType
 import org.antlr.v4.runtime.ANTLRInputStream
 
 object Sql : AntlrLanguageProvider() {

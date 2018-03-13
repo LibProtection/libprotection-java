@@ -1,6 +1,6 @@
-package com.ptsecurity.libprotection.injections.languages.url
+package org.librpotection.injections.languages.url
 
-import com.ptsecurity.libprotection.injections.languages.TokenType
+import org.librpotection.injections.languages.TokenType
 
 enum class UrlTokenType: TokenType {
     Error,

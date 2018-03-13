@@ -1,6 +1,6 @@
-package com.ptsecurity.libprotection.injections.languages.javascript
+package org.librpotection.injections.languages.javascript
 
-import com.ptsecurity.libprotection.injections.languages.TokenType
+import org.librpotection.injections.languages.TokenType
 
 enum class JavaScriptTokenType(val value: Int): TokenType {
     RegularExpressionLiteral(1),

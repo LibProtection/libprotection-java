@@ -1,4 +1,4 @@
-package com.ptsecurity.libprotection.injections.languages
+package org.librpotection.injections.languages
 
 abstract class LanguageProvider {
     abstract val name: String

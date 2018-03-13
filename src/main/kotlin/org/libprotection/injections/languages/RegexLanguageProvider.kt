@@ -1,4 +1,4 @@
-package com.ptsecurity.libprotection.injections.languages
+package org.librpotection.injections.languages
 
 abstract class RegexLanguageProvider : LanguageProvider() {
     protected abstract val errorTokenType: TokenType

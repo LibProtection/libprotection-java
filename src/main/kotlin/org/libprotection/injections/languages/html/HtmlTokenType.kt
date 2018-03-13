@@ -1,6 +1,6 @@
-package com.ptsecurity.libprotection.injections.languages.html
+package org.librpotection.injections.languages.html
 
-import com.ptsecurity.libprotection.injections.languages.TokenType
+import org.librpotection.injections.languages.TokenType
 
 enum class HtmlTokenType(val value: Int) : TokenType {
     HtmlComment(1),

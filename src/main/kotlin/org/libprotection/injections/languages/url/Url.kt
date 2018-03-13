@@ -1,9 +1,9 @@
-package com.ptsecurity.libprotection.injections.languages.url
+package org.librpotection.injections.languages.url
 
-import com.ptsecurity.libprotection.injections.languages.RegexLanguageProvider
-import com.ptsecurity.libprotection.injections.languages.RegexTokenDefinition
-import com.ptsecurity.libprotection.injections.languages.Token
-import com.ptsecurity.libprotection.injections.languages.TokenType
+import org.librpotection.injections.languages.RegexLanguageProvider
+import org.librpotection.injections.languages.RegexTokenDefinition
+import org.librpotection.injections.languages.Token
+import org.librpotection.injections.languages.TokenType
 import java.net.URLEncoder
 
 object Url : RegexLanguageProvider() {

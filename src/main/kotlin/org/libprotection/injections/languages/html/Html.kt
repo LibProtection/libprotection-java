@@ -1,12 +1,12 @@
-package com.ptsecurity.libprotection.injections.languages.html
+package org.librpotection.injections.languages.html
 
 import HTMLLexer
-import com.ptsecurity.libprotection.injections.languages.AntlrLanguageProvider
-import com.ptsecurity.libprotection.injections.languages.IslandDto
-import com.ptsecurity.libprotection.injections.languages.Token
-import com.ptsecurity.libprotection.injections.languages.TokenType
-import com.ptsecurity.libprotection.injections.languages.javascript.JavaScript
-import com.ptsecurity.libprotection.injections.languages.url.Url
+import org.librpotection.injections.languages.AntlrLanguageProvider
+import org.librpotection.injections.languages.IslandDto
+import org.librpotection.injections.languages.Token
+import org.librpotection.injections.languages.TokenType
+import org.librpotection.injections.languages.javascript.JavaScript
+import org.librpotection.injections.languages.url.Url
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.owasp.encoder.Encode
 

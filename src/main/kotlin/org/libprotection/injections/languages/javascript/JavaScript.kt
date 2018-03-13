@@ -1,9 +1,9 @@
-package com.ptsecurity.libprotection.injections.languages.javascript
+package org.librpotection.injections.languages.javascript
 
-import com.ptsecurity.libprotection.injections.languages.AntlrLanguageProvider
-import com.ptsecurity.libprotection.injections.languages.TokenType
+import org.librpotection.injections.languages.AntlrLanguageProvider
+import org.librpotection.injections.languages.TokenType
 import JavaScriptLexer
-import com.ptsecurity.libprotection.injections.languages.Token
+import org.librpotection.injections.languages.Token
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.apache.commons.lang3.StringEscapeUtils
 

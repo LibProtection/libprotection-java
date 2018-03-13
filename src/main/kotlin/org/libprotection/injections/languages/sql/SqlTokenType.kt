@@ -1,6 +1,6 @@
-package com.ptsecurity.libprotection.injections.languages.sql
+package org.librpotection.injections.languages.sql
 
-import com.ptsecurity.libprotection.injections.languages.TokenType
+import org.librpotection.injections.languages.TokenType
 
 enum class SqlTokenType(val value: kotlin.Int) : TokenType {
     Space(1),

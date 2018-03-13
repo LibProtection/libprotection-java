@@ -1,8 +1,8 @@
-import com.ptsecurity.libprotection.injections.languages.filepath.FilePath
-import com.ptsecurity.libprotection.injections.languages.html.Html
-import com.ptsecurity.libprotection.injections.languages.javascript.JavaScript
-import com.ptsecurity.libprotection.injections.languages.sql.Sql
-import com.ptsecurity.libprotection.injections.languages.url.Url
+import org.librpotection.injections.languages.filepath.FilePath
+import org.librpotection.injections.languages.html.Html
+import org.librpotection.injections.languages.javascript.JavaScript
+import org.librpotection.injections.languages.sql.Sql
+import org.librpotection.injections.languages.url.Url
 import org.apache.commons.io.input.BOMInputStream
 import org.junit.Assert.assertEquals
 import org.junit.Test

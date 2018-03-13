@@ -1,4 +1,4 @@
-package com.ptsecurity.libprotection.injections.languages
+package org.librpotection.injections.languages
 
 class RegexTokenDefinition(private val regex: String, val type: TokenType) {
     private val _regex = Regex("^$regex")

@@ -1,4 +1,4 @@
-package com.ptsecurity.libprotection.injections.languages
+package org.librpotection.injections.languages
 
 import org.antlr.v4.runtime.Lexer
 

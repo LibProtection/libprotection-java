@@ -1,4 +1,4 @@
-group 'com.ptsecurity'
+group 'org.librpotection'
 version '1.0-SNAPSHOT'
 
 buildscript {

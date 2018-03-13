@@ -1,6 +1,6 @@
-package com.ptsecurity.libprotection.injections.languages
+package org.librpotection.injections.languages
 
-import com.ptsecurity.libprotection.injections.Range
+import org.librpotection.injections.Range
 import javax.validation.constraints.NotEmpty
 
 class Token(

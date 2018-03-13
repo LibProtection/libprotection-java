@@ -1,4 +1,4 @@
-package com.ptsecurity.libprotection.injections
+package org.librpotection.injections
 
 class Range(val lowerBound: Int, val upperBound: Int) {
     fun length() = upperBound - lowerBound
