@@ -27,6 +27,8 @@ dependencies {
     compile "org.owasp.encoder:encoder:1.2.1"
     antlr "org.antlr:antlr4:4.5"
     testCompile 'junit:junit:4.12'
+// https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
+    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.7.1'
 }
 
 compileKotlin {
@@ -36,19 +38,24 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-task copySubmoduleFiles{
+task copyGrammarFiles{
     doLast {
         copy {
             from '\\submodules\\libprotection-common\\grammars'
             into 'src\\main\\antlr'
         }
+    }
+}
+generateGrammarSource.dependsOn copyGrammarFiles
+
+task copyGrammarTestFiles{
+    doLast {
         copy {
             from '\\submodules\\libprotection-common\\test-cases\\tokenization'
             into 'src\\test\\resources\\tokenization-test-cases'
         }
     }
 }
-
-generateGrammarSource.dependsOn copySubmoduleFiles
+test.dependsOn copyGrammarTestFiles
 
 compileKotlin.dependsOn generateGrammarSource

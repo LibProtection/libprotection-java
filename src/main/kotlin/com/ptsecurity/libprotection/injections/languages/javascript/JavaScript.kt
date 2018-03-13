@@ -2,7 +2,7 @@ package com.ptsecurity.libprotection.injections.languages.javascript
 
 import com.ptsecurity.libprotection.injections.languages.AntlrLanguageProvider
 import com.ptsecurity.libprotection.injections.languages.TokenType
-import JavaScriptJavaLexer
+import JavaScriptLexer
 import com.ptsecurity.libprotection.injections.languages.Token
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.apache.commons.lang3.StringEscapeUtils
@@ -16,7 +16,9 @@ object JavaScript : AntlrLanguageProvider() {
     override fun convertAntlrTokenType(antlrTokenType: Int) =
             JavaScriptTokenType.fromInt(antlrTokenType) ?: throw IllegalArgumentException("Unexpected java script token type $antlrTokenType")
 
-    override fun createLexer(text: String) = JavaScriptJavaLexer(ANTLRInputStream(text)).apply { strictMode = false }
+    override fun createLexer(text: String) = JavaScriptLexer(ANTLRInputStream(text)).apply {
+        this.setUseStrictDefault(false)
+    }
 
     override fun isSafeToken(type: TokenType, text: String) = when (type as JavaScriptTokenType) {
         JavaScriptTokenType.RegularExpressionLiteral,
