@@ -36,4 +36,19 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+task copySubmoduleFiles{
+    doLast {
+        copy {
+            from '\\submodules\\libprotection-common\\grammars'
+            into 'src\\main\\antlr'
+        }
+        copy {
+            from '\\submodules\\libprotection-common\\test-cases\\tokenization'
+            into 'src\\test\\resources\\tokenization-test-cases'
+        }
+    }
+}
+
+generateGrammarSource.dependsOn copySubmoduleFiles
+
 compileKotlin.dependsOn generateGrammarSource
