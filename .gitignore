@@ -3,5 +3,5 @@
 out/
 build/
 .gradle/
-/src/test/resources/tokenization-test-cases
-/src/main/antlr
+libprotection/src/test/resources/tokenization-test-cases
+libprotection/src/main/antlr

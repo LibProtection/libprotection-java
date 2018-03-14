@@ -1,0 +1,23 @@
+group 'org.librpotection'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+configurations {
+    provided
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+        test.compileClasspath += configurations.provided
+        test.runtimeClasspath += configurations.provided
+    }
+}
+
+
+dependencies {
+// https://mvnrepository.com/artifact/javax.faces/javax.faces-api
+    provided group: 'javax.faces', name: 'javax.faces-api', version: '2.3'
+}

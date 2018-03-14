@@ -1,4 +1,8 @@
-[submodule "submodules/libprotection-common"]
-	path = submodules/libprotection-common
+[submodule "libprotection/submodules"]
+	path = libprotection/submodules
 	url = https://github.com/LibProtection/libprotection-common.git
-    branch = dev
+	branch = dev
+[submodule "libprotection/submodules/libprotection-common"]
+	path = libprotection/submodules/libprotection-common
+	url = https://github.com/LibProtection/libprotection-common.git
+	branch = dev

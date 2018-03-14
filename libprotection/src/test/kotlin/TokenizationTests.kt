@@ -16,25 +16,25 @@ class TokenizationTests {
         doTest("filepath", "general.filepath")
     }
 
-    @Test
+    /*@Test
     fun `general html`() {
         doTest("html", "general.html")
-    }
+    }*/
 
-    @Test
+    /*@Test
     fun `general javascript`() {
         doTest("javascript", "general.javascript")
-    }
+    }*/
 
     @Test
     fun `general sql`() {
         doTest("sql", "general.sql")
     }
 
-    @Test
+    /*@Test
     fun `general url`() {
         doTest("url", "general.url")
-    }
+    }*/
 
     @Test
     fun `ntfs-attributes filepath`() {
@@ -61,15 +61,15 @@ class TokenizationTests {
         doTest("filepath", "unc.filepath")
     }
 
-    @Test
+    /*@Test
     fun `unclosed-quotes html`() {
         doTest("html", "unclosed-quotes.html")
-    }
+    }*/
 
-    @Test
+    /*@Test
     fun `unclosed-tag html`() {
         doTest("html", "unclosed-tag.html")
-    }
+    }*/
 
     private fun doTest(languageName: String, caseFileName: String) {
         val caseText = readFile(caseFileName).readText()
