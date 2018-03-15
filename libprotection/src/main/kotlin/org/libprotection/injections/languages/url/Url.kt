@@ -1,89 +1,80 @@
-package org.librpotection.injections.languages.url
+package org.libprotection.injections.languages.url
 
-import org.librpotection.injections.languages.RegexLanguageProvider
-import org.librpotection.injections.languages.RegexTokenDefinition
-import org.librpotection.injections.languages.Token
-import org.librpotection.injections.languages.TokenType
-import java.net.URLEncoder
+import com.sun.javaws.exceptions.InvalidArgumentException
+import org.libprotection.injections.languages.RegexLanguageProvider
+import org.libprotection.injections.languages.RegexRule
+import org.libprotection.injections.languages.Token
+import org.libprotection.injections.languages.TokenType
+import java.util.*
 
 object Url : RegexLanguageProvider() {
-    override val name = "Url"
-    override val errorTokenType = UrlTokenType.Error
-    override val tokenDefinitions = arrayListOf(
-            RegexTokenDefinition("""[^:/?#]+:""", UrlTokenType.Scheme),
-            RegexTokenDefinition("""//[^/?#]*""", UrlTokenType.AuthorityCtx),
-            RegexTokenDefinition("""[^?#]*""", UrlTokenType.PathCtx),
-            RegexTokenDefinition("""\?[^#]*""", UrlTokenType.QueryCtx),
-            RegexTokenDefinition("""#.*""", UrlTokenType.Fragment)
-    )
 
-    override fun tokenize(text: String, offset: Int): Collection<Token> {
-        val res = arrayListOf<Token>()
-        for (token in super.tokenize(text, offset)) {
-            var tokenText = token.text
-            var lowerBound = token.range.lowerBound
-            when (token.type as UrlTokenType) {
-                UrlTokenType.AuthorityCtx -> {
-                    tokenText = tokenText.substring(2, tokenText.length)
-                    lowerBound += 2
-                    res.addAll(splitToken(tokenText, lowerBound, ":@", UrlTokenType.AuthorityEntry))
-                }
-                UrlTokenType.PathCtx -> res.addAll(splitToken(tokenText, lowerBound, "\\/", UrlTokenType.PathEntry))
-                UrlTokenType.QueryCtx -> res.addAll(splitToken(tokenText, lowerBound, "&=", UrlTokenType.QueryEntry))
-                else -> res.add(token)
-            }
-        }
-        return res
+    override val errorTokenType: TokenType = UrlTokenType.Error
+
+    /**
+     * Could throw NPE if this method called from ctor or init super class methods!
+     */
+    override val mainModeRules: Iterable<RegexRule> by lazy{
+        listOf(
+                RegexRule.noTokenPushMode("""[^:/?#]+:""", SchemeModeRules),
+                RegexRule.noTokenPushMode("""//[^/?#]*""", AuthorityModeRules),
+                RegexRule.noTokenPushMode("""[^?#]*""", PathModeRules),
+                RegexRule.noTokenPushMode("""?[^#]*""", QueryModeRules),
+                RegexRule.noTokenPushMode("""#.*""", FragmentModeRules)) }
+
+
+    private val SchemeModeRules =  listOf(
+            RegexRule.token("[^:]+", UrlTokenType.Scheme),
+            RegexRule.tokenPopMode(":", UrlTokenType.Separator))
+
+    private val AuthorityModeRules =  listOf(
+            RegexRule.token("//", UrlTokenType.Separator),
+            RegexRule.token("[^/@:]+", UrlTokenType.AuthorityEntry),
+            RegexRule.token("[:@]", UrlTokenType.Separator),
+            RegexRule.noTokenPopMode("/"))
+
+    private val PathModeRules =  listOf(
+            RegexRule.token("/", UrlTokenType.Separator),
+            RegexRule.token("[^/?#]+", UrlTokenType.PathEntry),
+            RegexRule.noTokenPopMode("[?#]"))
+
+    private val QueryModeRules =  listOf(
+            RegexRule.token("\\?", UrlTokenType.Separator),
+            RegexRule.token("[^?/=&#]+", UrlTokenType.QueryEntry),
+            RegexRule.token("[=&]", UrlTokenType.Separator),
+            RegexRule.noTokenPopMode("#"))
+
+    private val FragmentModeRules =  listOf(
+            RegexRule.token("#", UrlTokenType.Separator),
+            RegexRule.tokenPopMode("[^#]*", UrlTokenType.Fragment))
+
+    override fun trySanitize(text: String, context: Token): Optional<String> = when(context.languageProvider) {
+        Url -> tryUrlEncode(text, context.type as UrlTokenType)
+        else -> throw InvalidArgumentException(arrayOf("Unsupported URL island: $context"))
     }
 
-    override fun trySanitize(text: String, context: Token): String? {
-        if (context.languageProvider is Url) return tryUrlEncode(text, context.type as UrlTokenType) ?: super.trySanitize(text, context)
-        else throw IllegalArgumentException("Unsupported URL island: $context")
-    }
-
-    override fun isSafeToken(type: TokenType, text: String) = when (type as UrlTokenType) {
-        UrlTokenType.QueryEntry, UrlTokenType.Fragment -> true
+    override fun isTrivial(type: TokenType, text: String): Boolean = when(type as UrlTokenType){
+        UrlTokenType.QueryEntry,
+        UrlTokenType.Fragment -> true
         UrlTokenType.PathEntry -> !text.contains("..")
         else -> false
     }
 
-    private fun splitToken(text: String, lb: Int, splitChars: String, tokenType: UrlTokenType): Collection<Token> {
-        if (text.isEmpty()) return emptyList()
-        val res = arrayListOf<Token>()
-        var lowerBound = lb
-        var sb = StringBuilder()
-        for (c in text) {
-            if (c in splitChars) {
-                if (sb.isNotEmpty()) {
-                    val tokenText = sb.toString()
-                    sb = StringBuilder()
-                    val upperBound = lowerBound + tokenText.length
-                    res.add(createToken(tokenType, lowerBound, upperBound, tokenText))
-                    lowerBound = upperBound + 1
-                } else {
-                    lowerBound++
+    private fun tryUrlEncode(text : String, tokenType : UrlTokenType) : Optional<String> = when(tokenType) {
+        UrlTokenType.PathEntry -> {
+            val fragments = text.split('/').toTypedArray()
+            for (i in 0..fragments.count())
+            {
+                if (fragments[i] != "") {
+                    fragments[i] = org.owasp.encoder.Encode.forUriComponent(fragments[i])
                 }
-            } else {
-                sb.append(c)
             }
+            Optional.of(fragments.joinToString("/"))
         }
-        if (sb.isNotEmpty()) {
-            val lastTokenText = sb.toString()
-            res.add(createToken(tokenType, lowerBound, lowerBound + lastTokenText.length, lastTokenText))
-        }
-        return res
+        UrlTokenType.QueryEntry,
+        UrlTokenType.Fragment -> Optional.of(org.owasp.encoder.Encode.forUriComponent(text))
+        else -> Optional.empty()
     }
 
-    private fun tryUrlEncode(text: String, urlTokenType: UrlTokenType): String? = when (urlTokenType) {
-        UrlTokenType.PathEntry -> {
-            val fragments = text.split("/").toMutableList()
-            for (i in 0 until fragments.size) {
-                if (fragments[i].isNotEmpty()) fragments[i] = URLEncoder.encode(fragments[i], "UTF-8")
-            }
-            fragments.reduce { a, b -> "$a/$b" }
-        }
-        UrlTokenType.QueryEntry, UrlTokenType.Fragment -> URLEncoder.encode(text, "UTF-8")
-        else -> null
-    }
 
 }

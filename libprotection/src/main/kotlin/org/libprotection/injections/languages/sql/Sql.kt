@@ -1,24 +1,24 @@
-package org.librpotection.injections.languages.sql
+package org.libprotection.injections.languages.sql
 
 import SQLLexer
-import org.librpotection.injections.languages.AntlrLanguageProvider
-import org.librpotection.injections.languages.Token
-import org.librpotection.injections.languages.TokenType
+import com.sun.javaws.exceptions.InvalidArgumentException
+import org.libprotection.injections.languages.AntlrLanguageProvider
+import org.libprotection.injections.languages.Token
+import org.libprotection.injections.languages.TokenType
 import org.antlr.v4.runtime.ANTLRInputStream
+import org.antlr.v4.runtime.Lexer
+import java.util.*
 
 object Sql : AntlrLanguageProvider() {
-    override val name = "Sql"
-    override fun convertAntlrTokenType(antlrTokenType: Int) =
-            SqlTokenType.fromInt(antlrTokenType) ?: throw IllegalArgumentException("Unexpected token type: $antlrTokenType")
 
-    override fun createLexer(text: String) = SQLLexer(ANTLRInputStream(text))
+    override fun convertAntlrTokenType(antlrTokenType: Int): TokenType = SqlTokenType.fromInt(antlrTokenType)
 
-    override fun trySanitize(text: String, context: Token): String? {
-        if (context.languageProvider is Sql) return trySqlEncode(text, context.type as SqlTokenType) ?: super.trySanitize(text, context)
-        else throw IllegalArgumentException("Unsupported SQL island: {context}")
-    }
+    override fun createLexer(text: String): Lexer = SQLLexer(ANTLRInputStream(text))
 
-    override fun isSafeToken(type: TokenType, text: String) = when (type as SqlTokenType) {
+    override fun isTrivial(type: TokenType, text: String): Boolean = when(type as SqlTokenType){
+        SqlTokenType.Space,
+        SqlTokenType.CommentInput,
+        SqlTokenType.LineComment,
         SqlTokenType.NullLiteral,
         SqlTokenType.FilesizeLiteral,
         SqlTokenType.StartNationalStringLiteral,
@@ -30,7 +30,13 @@ object Sql : AntlrLanguageProvider() {
         else -> false
     }
 
-    private fun trySqlEncode(text: String, tokenType: SqlTokenType) =
-            if (tokenType == SqlTokenType.StringLiteral) text.replace("''", "'").replace("'", "''")
-            else null
+    override fun trySanitize(text: String, context: Token): Optional<String> = when(context.languageProvider){
+        Sql -> trySqlEncode(text, context.type as SqlTokenType)
+        else -> throw InvalidArgumentException(arrayOf("Unsupported SQL island: $context"))
+    }
+
+    private fun trySqlEncode(text : String, tokenType : SqlTokenType) = when(tokenType) {
+            SqlTokenType.StringLiteral -> Optional.of(text.replace("''", "'").replace("'", "''"))
+            else -> Optional.empty()
+    }
 }

@@ -1,17 +1,13 @@
-package org.librpotection.injections.languages.url
+package org.libprotection.injections.languages.url
 
-import org.librpotection.injections.languages.TokenType
+import org.libprotection.injections.languages.TokenType
 
-enum class UrlTokenType: TokenType {
+enum class UrlTokenType : TokenType {
     Error,
+    Separator,
     Scheme,
     AuthorityEntry,
     PathEntry,
     QueryEntry,
     Fragment,
-
-    // Non-terminals
-    AuthorityCtx,
-    PathCtx,
-    QueryCtx,
 }

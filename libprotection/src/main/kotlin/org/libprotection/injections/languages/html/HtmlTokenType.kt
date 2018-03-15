@@ -1,6 +1,6 @@
-package org.librpotection.injections.languages.html
+package org.libprotection.injections.languages.html
 
-import org.librpotection.injections.languages.TokenType
+import org.libprotection.injections.languages.TokenType
 
 enum class HtmlTokenType(val value: Int) : TokenType {
     HtmlComment(1),
@@ -8,32 +8,24 @@ enum class HtmlTokenType(val value: Int) : TokenType {
     XmlDeclaration(3),
     Cdata(4),
     Dtd(5),
-    Scriptlet(6),
-    SeaWs(7),
-    ScriptOpen(8),
-    StyleOpen(9),
-    TagOpen(10),
-    HtmlText(11),
-    ErrorText(12),
-    TagClose(13),
-    TagSlashClose(14),
-    TagSlash(15),
-    TagEquals(16),
-    TagName(17),
-    TagWhitespace(18),
-    ErrorTag(19),
-    ScriptBody(20),
-    ScriptShortBody(21),
-    ErrorScript(22),
-    StyleBody(23),
-    StyleShortBody(24),
-    ErrorStyle(25),
-    AttvalueValue(26),
-    Attribute(27),
-    ErrorAttvalue(28);
+    SpecialTag(6),
+    TagOpen(7),
+    HtmlText(8),
+    ErrorText(9),
+    TagClose(10),
+    TagSlashClose(11),
+    TagSlash(12),
+    TagEquals(13),
+    TagWhiteSpace(14),
+    AttributeName(15),
+    ErrorTag(16),
+    AttributeWhiteSpace(17),
+    AttributeSlash(18),
+    AttributeValue(19),
+    ErrorAttribute(20);
 
     companion object {
         private val map = HtmlTokenType.values().associateBy(HtmlTokenType::value)
-        fun fromInt(type: kotlin.Int) = map[type]
+        fun fromInt(type: kotlin.Int) = map[type]!!
     }
 }

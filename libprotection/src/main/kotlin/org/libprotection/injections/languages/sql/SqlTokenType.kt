@@ -1,6 +1,6 @@
-package org.librpotection.injections.languages.sql
+package org.libprotection.injections.languages.sql
 
-import org.librpotection.injections.languages.TokenType
+import org.libprotection.injections.languages.TokenType
 
 enum class SqlTokenType(val value: kotlin.Int) : TokenType {
     Space(1),
@@ -1392,6 +1392,6 @@ enum class SqlTokenType(val value: kotlin.Int) : TokenType {
 
     companion object {
         private val map = SqlTokenType.values().associateBy(SqlTokenType::value)
-        fun fromInt(type: kotlin.Int) = map[type]
+        fun fromInt(type: kotlin.Int) = map[type]!!
     }
 }

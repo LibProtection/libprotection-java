@@ -1,6 +1,6 @@
-package org.librpotection.injections.languages.javascript
+package org.libprotection.injections.languages.javascript
 
-import org.librpotection.injections.languages.TokenType
+import org.libprotection.injections.languages.TokenType
 
 enum class JavaScriptTokenType(val value: Int): TokenType {
     RegularExpressionLiteral(1),
@@ -110,6 +110,6 @@ enum class JavaScriptTokenType(val value: Int): TokenType {
 
     companion object {
         private val map = JavaScriptTokenType.values().associateBy(JavaScriptTokenType::value)
-        fun fromInt(type: kotlin.Int) = map[type]
+        fun fromInt(type: kotlin.Int) = map[type]!!
     }
 }

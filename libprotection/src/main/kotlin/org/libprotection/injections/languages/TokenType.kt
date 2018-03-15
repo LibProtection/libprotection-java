@@ -1,3 +1,3 @@
-package org.librpotection.injections.languages
+package org.libprotection.injections.languages
 
 interface TokenType

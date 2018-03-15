@@ -1,6 +1,6 @@
-package org.librpotection.injections.languages.filepath
+package org.libprotection.injections.languages.filepath
 
-import org.librpotection.injections.languages.TokenType
+import org.libprotection.injections.languages.TokenType
 
 enum class FilePathTokenType: TokenType {
     Error,

@@ -1,26 +1,30 @@
-package org.librpotection.injections.languages.javascript
+package org.libprotection.injections.languages.javascript
 
-import org.librpotection.injections.languages.AntlrLanguageProvider
-import org.librpotection.injections.languages.TokenType
+import org.libprotection.injections.languages.AntlrLanguageProvider
+import org.libprotection.injections.languages.TokenType
 import JavaScriptLexer
-import org.librpotection.injections.languages.Token
+import com.sun.javaws.exceptions.InvalidArgumentException
+import org.libprotection.injections.languages.Token
 import org.antlr.v4.runtime.ANTLRInputStream
+import org.antlr.v4.runtime.Lexer
 import org.apache.commons.lang3.StringEscapeUtils
+import java.util.*
 
 object JavaScript : AntlrLanguageProvider() {
-    override val name = "JavaScript"
-    override fun trySanitize(text: String, context: Token) =
-            if (context.languageProvider is JavaScript) tryJavaScriptEncode(text, context.type as JavaScriptTokenType)
-            else throw IllegalArgumentException("Unsupported JavaScript island: $context")
 
-    override fun convertAntlrTokenType(antlrTokenType: Int) =
-            JavaScriptTokenType.fromInt(antlrTokenType) ?: throw IllegalArgumentException("Unexpected java script token type $antlrTokenType")
-
-    override fun createLexer(text: String) = JavaScriptLexer(ANTLRInputStream(text)).apply {
-        this.setUseStrictDefault(false)
+    override fun trySanitize(text: String, context: Token): Optional<String> = when (context.languageProvider) {
+        JavaScript -> tryJavaScriptEncode(text, context.type as JavaScriptTokenType)
+        else -> throw InvalidArgumentException(arrayOf("Unsupported JavaScript island: $context"))
     }
 
-    override fun isSafeToken(type: TokenType, text: String) = when (type as JavaScriptTokenType) {
+    override fun convertAntlrTokenType(antlrTokenType: Int): TokenType = JavaScriptTokenType.fromInt(antlrTokenType)
+
+    override fun createLexer(text: String): Lexer = JavaScriptLexer(ANTLRInputStream(text)).apply { setUseStrictDefault(false) }
+
+    override fun isTrivial(type: TokenType, text: String): Boolean = when (type as JavaScriptTokenType) {
+        JavaScriptTokenType.LineTerminator,
+        JavaScriptTokenType.MultiLineComment,
+        JavaScriptTokenType.SingleLineComment,
         JavaScriptTokenType.RegularExpressionLiteral,
         JavaScriptTokenType.NullLiteral,
         JavaScriptTokenType.BooleanLiteral,
@@ -31,9 +35,11 @@ object JavaScript : AntlrLanguageProvider() {
         else -> false
     }
 
-    private fun tryJavaScriptEncode(text: String, type: JavaScriptTokenType) = when (type) {
-        JavaScriptTokenType.RegularExpressionLiteral -> StringEscapeUtils.escapeEcmaScript(text).replace("/", "\\/")
-        JavaScriptTokenType.StringLiteral -> StringEscapeUtils.escapeEcmaScript(text)
-        else -> null
+    private fun tryJavaScriptEncode(text: String, tokenType: JavaScriptTokenType): Optional<String> = when (tokenType) {
+        JavaScriptTokenType.RegularExpressionLiteral ->
+            Optional.of(org.owasp.encoder.Encode.forJavaScript(text).replace("/", "\\/"))
+        JavaScriptTokenType.StringLiteral ->
+            Optional.of(org.owasp.encoder.Encode.forJavaScript(text))
+        else -> Optional.empty()
     }
 }

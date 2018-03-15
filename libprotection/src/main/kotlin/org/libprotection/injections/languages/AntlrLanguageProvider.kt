@@ -1,21 +1,24 @@
-package org.librpotection.injections.languages
+package org.libprotection.injections.languages
 
 import org.antlr.v4.runtime.Lexer
 
 abstract class AntlrLanguageProvider : LanguageProvider() {
     private val eofAntlrTokenType = -1
-    override fun tokenize(text: String, offset: Int): Collection<Token> {
+
+    override fun tokenize(text: String, offset: Int): Iterable<Token> {
         val res = arrayListOf<Token>()
-        val lexer = createLexer(text)
-        var token = lexer.nextToken()
-        while (token.type != eofAntlrTokenType) {
-            res.add(createToken(
-                    convertAntlrTokenType(token.type),
-                    token.startIndex + offset,
-                    token.stopIndex + offset + 1,
-                    token.text
-            ))
-            token = lexer.nextToken()
+
+        val lexer = createLexer(text);
+        var antlrToken = lexer.nextToken();
+
+        while (antlrToken.type != eofAntlrTokenType)
+        {
+            val token = createToken(convertAntlrTokenType(antlrToken.type), antlrToken.startIndex + offset,
+                antlrToken.stopIndex + offset, antlrToken.text)
+
+            res.add(token)
+
+            antlrToken = lexer.nextToken()
         }
         return res
     }

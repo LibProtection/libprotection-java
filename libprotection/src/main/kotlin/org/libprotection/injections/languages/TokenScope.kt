@@ -1,6 +1,6 @@
-package org.librpotection.injections.languages
+package org.libprotection.injections.languages
 
-import org.librpotection.injections.Range
+import org.libprotection.injections.Range
 
 internal class TokenScope(val range: Range) {
     val tokens = arrayListOf<Token>()
