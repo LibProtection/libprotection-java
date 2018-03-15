@@ -1,7 +1,8 @@
-/.idea/*
+*/.idea/*
 *.iml
 out/
 build/
 .gradle/
 libprotection/src/test/resources/tokenization-test-cases
 libprotection/src/main/antlr
+
