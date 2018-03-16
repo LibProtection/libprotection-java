@@ -5,6 +5,7 @@ import org.libprotection.injections.languages.sql.Sql
 import org.libprotection.injections.languages.url.Url
 import org.apache.commons.io.input.BOMInputStream
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Test
 import java.io.BufferedReader
 import java.io.File
@@ -16,25 +17,26 @@ class TokenizationTests {
         doTest("filepath", "general.filepath")
     }
 
-    /*@Test
+    @Test
+    @Ignore("invalid token names in .tokens file")
     fun `general html`() {
         doTest("html", "general.html")
-    }*/
+    }
 
-    /*@Test
+    @Test
     fun `general javascript`() {
         doTest("javascript", "general.javascript")
-    }*/
+    }
 
     @Test
     fun `general sql`() {
         doTest("sql", "general.sql")
     }
 
-    /*@Test
+    @Test
     fun `general url`() {
         doTest("url", "general.url")
-    }*/
+    }
 
     @Test
     fun `ntfs-attributes filepath`() {
@@ -61,15 +63,15 @@ class TokenizationTests {
         doTest("filepath", "unc.filepath")
     }
 
-    /*@Test
+    @Test
     fun `unclosed-quotes html`() {
         doTest("html", "unclosed-quotes.html")
-    }*/
+    }
 
-    /*@Test
+    @Test
     fun `unclosed-tag html`() {
         doTest("html", "unclosed-tag.html")
-    }*/
+    }
 
     private fun doTest(languageName: String, caseFileName: String) {
         val caseText = readFile(caseFileName).readText()
@@ -87,10 +89,10 @@ class TokenizationTests {
         val obtainedTokens = tokens.map { token ->
             val obtainedText = caseText.substring(
                     token.range.lowerBound,
-                    token.range.upperBound
+                    token.range.upperBound+1
             )
             if (obtainedText != token.text) throw RuntimeException("Expected at ${token.range}: ${token.text}, obtained: $obtainedText")
-            "${token.languageProvider.javaClass.name}:$token".replace("\r", "\\r").replace("\n", "\\n")
+            "${token.languageProvider.javaClass.simpleName}:$token".replace("\r", "\\r").replace("\n", "\\n")
         }
 
         val expectedTokens = readFile("$caseFileName.tokens").lines().toList()
