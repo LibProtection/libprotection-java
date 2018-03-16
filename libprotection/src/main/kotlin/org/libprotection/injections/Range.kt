@@ -1,11 +1,17 @@
 package org.libprotection.injections
 
-class Range(val lowerBound: Int, val upperBound: Int) {
-    fun length() = upperBound - lowerBound
-    fun contains(point: Int) = point in lowerBound..upperBound
-    fun containsRange(r: Range) = contains(r.lowerBound) && contains(r.upperBound)
-    fun overlaps(r: Range) = lowerBound >= r.lowerBound && upperBound <= r.upperBound
-            || contains(r.lowerBound) || contains(r.upperBound)
+data class Range(val lowerBound: Int, val upperBound: Int) {
 
-    override fun toString() = "$lowerBound..${upperBound - 1}"
+    val length = upperBound - lowerBound + 1
+
+    fun contains(point: Int) = point in lowerBound..upperBound
+
+    fun contains(range: Range) = contains(range.lowerBound) && contains(range.upperBound)
+
+    fun overlaps(range: Range) =
+         (lowerBound >= range.lowerBound && upperBound <= range.upperBound
+                || contains(range.lowerBound)
+                || contains(range.upperBound))
+
+    override fun toString() = "[$lowerBound..$upperBound]"
 }

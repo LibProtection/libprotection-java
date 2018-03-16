@@ -8,15 +8,15 @@ import java.util.*
 
 object FilePath : RegexLanguageProvider() {
 
-    private val disallowedSymbols = """<>:""/\\\|\?\*\x00-\x1f"""
+    private const val disallowedSymbols = """<>:""/\\\|\?\*""" + "\u0000-\u001f"
 
     override val errorTokenType = FilePathTokenType.Error
 
     override val mainModeRules = arrayListOf(
             RegexRule.token("""[\\/]+""", FilePathTokenType.Separator),
             RegexRule.token("""[a-zA-Z]+[\$:](?=[\\/])""", FilePathTokenType.DeviceID),
-            RegexRule.token("""[^$disallowedSymbols]+""", FilePathTokenType.FSEntryName),
-            RegexRule.token(""":+\$[^$disallowedSymbols]+""", FilePathTokenType.NTFSAttribute),
+            RegexRule.token("[^$disallowedSymbols]+", FilePathTokenType.FSEntryName),
+            RegexRule.token(":+\\$[^$disallowedSymbols]+", FilePathTokenType.NTFSAttribute),
             RegexRule.token("[$disallowedSymbols]", FilePathTokenType.DisallowedSymbol)
     )
 

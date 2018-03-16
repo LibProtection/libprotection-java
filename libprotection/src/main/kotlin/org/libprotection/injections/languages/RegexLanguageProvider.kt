@@ -24,7 +24,7 @@ abstract class RegexLanguageProvider : LanguageProvider() {
 
                 if (match.isPresent && match.get() != 0)
                 {
-                    isMatched = true;
+                    isMatched = true
                     if (rule.isToken)
                     {
                         val tokenText = currentText.substring(0, match.get())
@@ -52,9 +52,10 @@ abstract class RegexLanguageProvider : LanguageProvider() {
                         currentPosition + offset,
                         currentPosition + offset,
                         text[0].toString())
-                res.add(token)
+
                 currentText = currentText.substring(1)
                 currentPosition++
+                res.add(token)
             }
         }
         return res

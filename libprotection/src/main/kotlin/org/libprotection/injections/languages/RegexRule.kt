@@ -16,13 +16,13 @@ class RegexRule(regex: String) {
     val isPushMode get() = modeRules != null
     var isPopMode : Boolean = false
         private set
-    val isToken : Boolean get() = NoToken.VALUE == type
+    val isToken : Boolean get() = NoToken.VALUE != type
 
     private val _regex : Regex = Regex("^$regex")
 
     fun tryMatch(text : String) : Optional<Int> {
 
-        val matchResult = _regex.matchEntire(text)
+        val matchResult = _regex.find(text)
         return if(matchResult != null){
             Optional.of(matchResult.value.length)
         }else{

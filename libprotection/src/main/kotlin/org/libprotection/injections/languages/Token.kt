@@ -11,5 +11,5 @@ class Token(
         @NotEmpty val text: String,
         val isTrivial : Boolean) {
     val range = Range(lowerBound, upperBound)
-    override fun toString() = "$type:\"$text\":[$range]"
+    override fun toString() = "$type:\"$text\":$range"
 }
