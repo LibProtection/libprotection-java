@@ -4,17 +4,19 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"> 
  <h:head>
-     <title>Страница авторизации</title>
+     <title>LibProtection</title>
  </h:head>
  <h:body>
+    <h:outputText value="#{Main.safeString}" escape="false" /><br />
+    <h:outputText value="#{Main.unsafeString}" escape="true" />
     <h:form>
         <h:panelGrid columns="2" border="0">
-            <h:outputText value="Логин"/>
-            <h:inputText value="#{Main.login}" />
-            <h:outputText value="Пароль"/>
-            <h:inputSecret value="#{Main.password}" />
+            <h:outputText value="Format:"/>
+            <h:inputText value="#{Main.format}" />
+            <h:outputText value="Arguments:"/>
+            <h:inputTextarea value="#{Main.arguments}" />
         </h:panelGrid>
-        <h:commandButton value="Вход" action="#{Main.checkLogin}" />
+        <h:commandButton value="Apply!" />
     </h:form>
 </h:body>
 </html>

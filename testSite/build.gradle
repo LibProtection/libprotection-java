@@ -23,4 +23,6 @@ dependencies {
     compile group: 'javax.faces', name: 'javax.faces-api', version: '2.3'
 // https://mvnrepository.com/artifact/com.sun.faces/jsf-impl
     compile group: 'com.sun.faces', name: 'jsf-impl', version: '2.2.16'
+    compile project(":libprotection")
 }
+

@@ -3,29 +3,49 @@ package main.java;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
+import org.libprotection.injections.*;
+import org.libprotection.injections.languages.html.Html;
+
+import java.text.MessageFormat;
+
 @ManagedBean (name="Main")
 @SessionScoped
 public class MainBean
 {
-    private String login;
-    private String password;
+    private String format = "<a href='{0}' onclick='alert(\"{1}\");return false'>{2}</a>";
+    private String arguments = "Default.aspx\n" +
+            "Hello from embedded JavaScript code!\n" +
+            "This site's home page";
 
-    public String getLogin() {
-        return login;
+    private String[] getArgumentsArray(){
+        return getArguments().split(System.getProperty("line.separator"));
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-	}
+    public String getSafeString(){
+        return SafeString.format(Html.INSTANCE, getFormat(), (Object[])getArgumentsArray());
+    }
 
-	public String getPassword() {
-	    return password;
-	}
+    public String getUnsafeString(){
+        return new MessageFormat(getFormat().replace("'", "''")).format(getArgumentsArray());
+    }
 
-	public void setPassword(String password) {
-	    this.password = password;
-	}
- 
+    public String getFormat(){
+        return this.format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getArguments() {
+        return this.arguments;
+    }
+
+    public void setArguments(String arguments) {
+        this.arguments = arguments;
+    }
+
+    /*
     public String checkLogin(){
         if(login.equalsIgnoreCase("alex") && password.equalsIgnoreCase("qwerty")){
 	        return "loginsuccess?faces-redirect=true";
@@ -33,4 +53,5 @@ public class MainBean
 	        return "loginfailed?faces-redirect=true";
 	    }
     }
+*/
 }
