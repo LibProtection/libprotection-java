@@ -11,14 +11,14 @@ class SafeString{
 
         @JvmStatic
         fun format(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?) : String =
-                tryFormat(provider, format, args).orElseThrow{ throw AttackDetectedException() }
+                tryFormat(provider, format, *args).orElseThrow{ throw AttackDetectedException() }
 
         @JvmStatic
         fun tryFormat(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?): Optional<String>{
 
             val taintedRanges = mutableListOf<Range>()
 
-            val messageFormat = MessageFormat(format)
+            val messageFormat = MessageFormat(format.replace("'", "''"))
 
             val iterator = messageFormat.formatToCharacterIterator(args)
 
@@ -30,7 +30,7 @@ class SafeString{
                 if(i == j){
                     j = iterator.getRunLimit(iterator.allAttributeKeys)
                     if(iterator.attributes.isNotEmpty()){
-                        taintedRanges.add(Range(i, i))
+                        taintedRanges.add(Range(i, j - 1))
                     }
                 }
 

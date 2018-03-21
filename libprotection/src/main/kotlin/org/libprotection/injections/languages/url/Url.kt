@@ -63,7 +63,7 @@ object Url : RegexLanguageProvider() {
     private fun tryUrlEncode(text : String, tokenType : UrlTokenType) : Optional<String> = when(tokenType) {
         UrlTokenType.PathEntry -> {
             val fragments = text.split('/').toTypedArray()
-            for (i in 0..fragments.count())
+            for (i in 0 until fragments.count())
             {
                 if (fragments[i] != "") {
                     fragments[i] = org.owasp.encoder.Encode.forUriComponent(fragments[i])

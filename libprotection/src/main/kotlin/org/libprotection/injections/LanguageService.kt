@@ -9,7 +9,7 @@ class LanguageService{
 
     companion object {
 
-        private fun String.substring(range : Range) = substring(range.lowerBound, range.length)
+        private fun String.substring(range : Range) = substring(range.lowerBound, range.upperBound + 1)
 
         fun trySanityze(languageProvider : LanguageProvider, text : String, taintedRanges : List<Range>) : Optional<String>{
 
@@ -33,16 +33,15 @@ class LanguageService{
 
             for(range in fragments.keys)            {
                 val charsToAppend = range.lowerBound - positionAtText
-                sanitizedBuilder.append(text, positionAtText, charsToAppend)
+                sanitizedBuilder.append(text, positionAtText, positionAtText + charsToAppend)
                 val lowerBound = sanitizedBuilder.length
                 sanitizedBuilder.append(fragments[range])
                 sanitizedRanges.add(Range(lowerBound, sanitizedBuilder.length - 1))
                 positionAtText = range.upperBound + 1
             }
 
-            if (positionAtText < text.length)            {
-                sanitizedBuilder.append(text, positionAtText, text.length - positionAtText)
-
+            if (positionAtText < text.length){
+                sanitizedBuilder.append(text, positionAtText, text.length)
             }
 
             val sanitizedText = sanitizedBuilder.toString()
@@ -51,7 +50,7 @@ class LanguageService{
         }
 
         fun validate(languageProvider : LanguageProvider, text : String, ranges : List<Range>) : Boolean {
-            val tokens = languageProvider.tokenize(text);
+            val tokens = languageProvider.tokenize(text)
 
             var scopesCount = 0
             var allTrivial = true
