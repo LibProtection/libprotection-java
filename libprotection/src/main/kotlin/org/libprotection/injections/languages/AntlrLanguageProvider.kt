@@ -8,13 +8,14 @@ abstract class AntlrLanguageProvider : LanguageProvider() {
     override fun tokenize(text: String, offset: Int): Iterable<Token> {
         val res = arrayListOf<Token>()
 
-        val lexer = createLexer(text);
-        var antlrToken = lexer.nextToken();
+        val lexer = createLexer(text)
+        var antlrToken = lexer.nextToken()
 
-        while (antlrToken.type != eofAntlrTokenType)
-        {
-            val token = createToken(convertAntlrTokenType(antlrToken.type), antlrToken.startIndex + offset,
-                antlrToken.stopIndex + offset, antlrToken.text)
+        while (antlrToken.type != eofAntlrTokenType) {
+            val token = createToken(
+                    convertAntlrTokenType(antlrToken.type),
+                    antlrToken.startIndex + offset,
+                    antlrToken.stopIndex + offset, antlrToken.text)
 
             res.add(token)
 

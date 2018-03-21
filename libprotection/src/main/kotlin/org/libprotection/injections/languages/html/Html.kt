@@ -80,7 +80,7 @@ object Html : AntlrLanguageProvider() {
                 if (contextChangedRes.isPresent)
                 {
                     val islandData = contextChangedRes.get()
-                    var islandTokens = islandData.languageProvider.tokenize(islandData.text, islandData.offset)
+                    val islandTokens = islandData.languageProvider.tokenize(islandData.text, islandData.offset)
                     for (islandToken in islandTokens)
                     {
                         res.add(islandToken)
