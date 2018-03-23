@@ -21,7 +21,7 @@ public class MainBean
         return getArguments().split(System.getProperty("line.separator"));
     }
 
-    public String getSafeString(){
+    public String getSafeString() throws AttackDetectedException{
         return SafeString.format(Html.INSTANCE, getFormat(), (Object[])getArgumentsArray());
     }
 

@@ -8,7 +8,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
 import java.io.BufferedReader
-import java.io.File
 import kotlin.streams.toList
 
 class TokenizationTests {
