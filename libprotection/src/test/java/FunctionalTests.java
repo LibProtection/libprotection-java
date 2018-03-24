@@ -12,7 +12,6 @@ import org.libprotection.injections.languages.html.Html;
 import org.libprotection.injections.languages.javascript.JavaScript;
 import org.libprotection.injections.languages.sql.Sql;
 import org.libprotection.injections.languages.url.Url;
-
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -56,8 +55,16 @@ public class FunctionalTests {
             DataPoint.getDataPoint(Sql.INSTANCE, null, "SELECT * FROM myTable WHERE id = {0}", "1 OR 1==1 --"),
             DataPoint.getDataPoint(Url.INSTANCE, null, "{0}/{1}", "../Asserts", "jsFile.js"),
             DataPoint.getDataPoint(FilePath.INSTANCE, null, "C:\\Assets\\{0}", "..\\jsFile.js"),
+            //safe modifier
+            DataPoint.getDataPoint(Html.INSTANCE, ":safe", ":safe"),
+            DataPoint.getDataPoint(Html.INSTANCE, ":safe&lt;br&gt;", "{0}", ":safe<br>"),
+            DataPoint.getDataPoint(Html.INSTANCE, "&lt;br&gt;xxx:safe", "{0}xxx:safe", "<br>"),
+            DataPoint.getDataPoint(Html.INSTANCE, "<br>", "{0}:safe", "<br>"),
+            DataPoint.getDataPoint(Html.INSTANCE, "<br>", "{0}:SaFe", "<br>"),
+            DataPoint.getDataPoint(Html.INSTANCE, "<br>:safe", "{0}:safe:safe", "<br>"),
+            DataPoint.getDataPoint(Html.INSTANCE, "<br>&lt;br&gt;", "{0}:safe{1}", "<br>", "<br>"),
+            DataPoint.getDataPoint(Html.INSTANCE, "&lt;br&gt;<br>&lt;br&gt;", "{0}{1}:safe{2}", "<br>", "<br>", "<br>"),
     };
-
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
