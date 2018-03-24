@@ -42,15 +42,27 @@ class SafeString{
 
         @JvmStatic
         fun tryFormat(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?): Optional<String> {
-            val keyItem = FormatCacheItem(format, args)
+            val locale = Locale.getDefault(Locale.Category.FORMAT)
+            val keyItem = FormatCacheItem(locale, format, args)
             return cache.get(keyItem) { tryFormatImpl(provider, it) }
         }
 
-        private fun getFormatAndRanges(format : String, arguments : Array<out Any?>) : Pair<String, List<Range>>{
+        @JvmStatic
+        @Throws(AttackDetectedException::class)
+        fun format(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?) : String =
+                tryFormat(provider, locale, format, *args).orElseThrow{ throw AttackDetectedException() }
+
+        @JvmStatic
+        fun tryFormat(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?): Optional<String> {
+            val keyItem = FormatCacheItem(locale, format, args)
+            return cache.get(keyItem) { tryFormatImpl(provider, it) }
+        }
+
+        private fun getFormatAndRanges(locale : Locale, format : String, arguments : Array<out Any?>) : Pair<String, List<Range>>{
 
             val ranges = mutableListOf<Range>()
 
-            val messageFormat = MessageFormat(format)
+            val messageFormat = MessageFormat(format, locale)
 
             val iterator = messageFormat.formatToCharacterIterator(arguments)
 
@@ -93,7 +105,7 @@ class SafeString{
         }
 
         private fun tryFormatImpl(provider : LanguageProvider, formatItem : FormatCacheItem): Optional<String>{
-            val formatResult = getFormatAndRanges(formatItem.format, formatItem.args)
+            val formatResult = getFormatAndRanges(formatItem.locale, formatItem.format, formatItem.args)
             return LanguageService.trySanityze(provider, formatResult.first, formatResult.second)
         }
     }
