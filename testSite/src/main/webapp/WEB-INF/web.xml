@@ -3,7 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemalocation="http://java.sun.com/xml/ns/javaee
          http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-         
+
+    <context-param>
+        <param-name>DisableArbitraryFormatFeature</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <welcome-file-list>
         <welcome-file>main.xhtml</welcome-file>
     </welcome-file-list>

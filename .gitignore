@@ -6,3 +6,6 @@ build/
 libprotection/src/test/resources/tokenization-test-cases
 libprotection/src/main/antlr
 
+testSite/bin/
+testSite/.settings/
+testSite/.project
