@@ -1,0 +1,33 @@
+group 'org.libprotection'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+/*
+configurations {
+    provided
+}*/
+
+/*sourceSets {
+    main {
+        compileClasspath += configurations.provided
+        test.compileClasspath += configurations.provided
+        test.runtimeClasspath += configurations.provided
+    }
+}*/
+
+
+dependencies {
+// https://mvnrepository.com/artifact/javax.faces/javax.faces-api
+    compile group: 'javax.faces', name: 'javax.faces-api', version: '2.3'
+// https://mvnrepository.com/artifact/com.sun.faces/jsf-impl
+    compile group: 'com.sun.faces', name: 'jsf-impl', version: '2.2.16'
+// https://mvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-spec
+    compile group: 'org.apache.taglibs', name: 'taglibs-standard-spec', version: '1.2.5'
+    // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.21.0.1'
+
+    compile project(":libprotection")
+}
+

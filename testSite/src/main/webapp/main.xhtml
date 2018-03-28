@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsp/jsf/core">
+
+<h:body>
+    <ui:composition template="./template.xhtml">
+        <ui:param name="pageTitle" value="LibProtection Test Page" />
+
+        <ui:define name="content">
+
+            <f:metadata>
+                <f:viewAction action="#{Main.onLoad()}" />
+            </f:metadata>
+
+            <div>
+                <script>
+					document.addEventListener("DOMContentLoaded", function () {
+						window.grammarSelectorId.value = "#{Main.id}";
+						window.grammarSelectorId.onchange = function () {
+							window.location = "main.xhtml?Id=" + encodeURIComponent(window.grammarSelectorId.value);
+						}
+					});
+				</script>
+
+                <div id="exampleFormsId">
+                    <div style="width:100%">
+                        <div style="margin-top: 20px">
+                            <h5>Vulnerable operation:</h5>
+                            #{Main.currentExample.operation}
+                        </div>
+                        <div style="display: table; width: 100%; margin-top: 20px">
+                            <div style="padding-right: 10px; display: table-cell; width: 50%">
+                                <h5>Format string:</h5>
+                                <input class="form-control" type="text" value="#{Main.format}" id="format" disabled="#{Main.inputsAreDisabled ? 'disabled' : null}" />
+                            </div>
+                            <div style="padding-left: 10px; display: table-cell; width: 50%">
+                                <h5>Arguments <small class="text-muted">(one per line):</small></h5>
+                                <textarea class="form-control" rows="5" ID="parameters">#{Main.parameters}</textarea>
+                            </div>
+                        </div>
+                        <div style="text-align: right; margin-top: 20px">
+                            <input style="width: 160px; display: inline-block" class="form-control" type="button" id="button" value="Try format" />
+                        </div>
+                    </div>
+                    <c:set var = "formatResult" value = "${Main.formatResult}" />
+                    <c:choose>
+                        <c:when test="#{formatResult.formatStatus == 'Success'}">
+                            <div style="margin-top: 20px">
+                                <h5>Format result:</h5>
+                                #{formatResult.formatResult}
+                            </div>
+                            <div style="margin-top: 20px">
+                                <h5>Vulnerable operation result:</h5>
+                                <c:choose>
+                                    <c:when test="#{formatResult.operationResult == null || formatResult.operationResult.isEmpty()}">
+                                        <span class="text-warning">None</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="text-success" id="operationResult">
+											<h:outputText value="#{formatResult.operationResult}" escape="false" />
+										</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </c:when>
+                        <c:when test="#{formatResult.formatStatus == 'AttackDetected'}">
+                            <div class="alert alert-dismissible alert-danger">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Attack detected!</strong> Vulnerable operation was not executed
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="alert alert-dismissible alert-warning">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Exception occured: #{formatResult.operationResult}</strong>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+
+                    <script>
+							button.onclick = function() {
+								 window.location =
+									 "main.xhtml?Id=" + encodeURIComponent("#{Main.id}") +
+									 <c:if test="#{!Main.inputsAreDisabled}">
+									 "&amp;Format=" + encodeURIComponent(window.format.value) +
+									 </c:if>
+									 "&amp;Parameters=" + encodeURIComponent(window.parameters.value);
+							}
+						</script>
+                    <hr />
+                </div>
+
+                <script>
+						<c:forEach items="#{Main.exampleKeys}" var="item" >
+							var option = document.createElement("option");
+							option.text = "#{item}";
+							grammarSelectorId.add(option);
+						</c:forEach>
+					</script>
+            </div>
+        </ui:define>
+    </ui:composition>
+</h:body>
+
+</html>
