@@ -5,16 +5,18 @@ import org.libprotection.injections.languages.Token
 import org.libprotection.injections.languages.TokenScope
 import java.util.*
 
-class LanguageService{
+internal class LanguageService{
+
+    internal class SanitizeResult(val success : Boolean, val tokens : Array<Token>, val sanitizedText : Optional<String>, val attackToken : Optional<Token>)
 
     companion object {
 
         private fun String.substring(range : Range) = substring(range.lowerBound, range.upperBound + 1)
 
-        fun trySanityze(languageProvider : LanguageProvider, text : String, taintedRanges : List<Range>) : Optional<String>{
+        fun trySanityze(languageProvider : LanguageProvider, text : String, taintedRanges : List<Range>) : SanitizeResult {
 
             val sanitizedRanges = mutableListOf<Range>()
-            val tokens = languageProvider.tokenize(text)
+            val tokens = languageProvider.tokenize(text).toList()
             val fragments = mutableMapOf<Range, String>()
 
             // Try to sanitize all attacked text's fragments
@@ -45,11 +47,16 @@ class LanguageService{
             }
 
             val sanitizedText = sanitizedBuilder.toString()
-            return if(validate(languageProvider, sanitizedText, sanitizedRanges)) Optional.of(sanitizedText)
-                   else Optional.empty()
+
+            val sanitizeResult = validate(languageProvider, sanitizedText, sanitizedRanges)
+            return if(sanitizeResult.first){
+                SanitizeResult(true, tokens.toTypedArray(), Optional.of(sanitizedText), Optional.empty())
+            }else{
+                SanitizeResult(false, tokens.toTypedArray(), Optional.empty(), sanitizeResult.second)
+            }
         }
 
-        fun validate(languageProvider : LanguageProvider, text : String, ranges : List<Range>) : Boolean {
+        fun validate(languageProvider : LanguageProvider, text : String, ranges : List<Range>) : Pair<Boolean, Optional<Token>> {
             val tokens = languageProvider.tokenize(text)
 
             var scopesCount = 0
@@ -58,9 +65,11 @@ class LanguageService{
             for (scope in getTokensScopes(tokens, ranges)){
                 scopesCount++
                 allTrivial = allTrivial and scope.isTrivial
-                if ((scope.tokens.count() > 1 ||  scopesCount > 1) && !allTrivial) { return false }
+                if ((scope.tokens.count() > 1 ||  scopesCount > 1) && !allTrivial) {
+                    return Pair(false, Optional.of(scope.tokens.find { !it.isTrivial }!!))
+                }
             }
-            return true
+            return Pair(true, Optional.empty())
         }
 
         private fun getTokensScopes(tokens : Iterable<Token>, ranges : List<Range>) : Iterable<TokenScope>

@@ -33,35 +33,39 @@ class SafeString{
 
     companion object {
 
-        private val providerCaches = HashMap<LanguageProvider, RandomizedLRUCache<FormatCacheItem, Optional<String>>>()
+
+        private val providerCaches = HashMap<LanguageProvider, RandomizedLRUCache<FormatCacheItem, FormatResult>>()
         private fun getProviderCache(provider: LanguageProvider) = providerCaches.getOrPut(provider) { RandomizedLRUCache(1024) }
 
-        @JvmStatic
-        @Throws(AttackDetectedException::class)
-        fun format(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?) : String =
-                tryFormat(provider, format, *args).orElseThrow{ throw AttackDetectedException() }
+        private class FormatAndRanges(val format: String, val ranges : List<Range>, val argumentRanges : List<Pair<Range, Int>>)
 
         @JvmStatic
-        fun tryFormat(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?): Optional<String> {
-            val locale = Locale.getDefault(Locale.Category.FORMAT)
+        @Throws(AttackDetectedException::class)
+        fun format(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?)
+            = tryFormat(provider, format, *args).orElseThrow{ throw AttackDetectedException() }
+
+        @JvmStatic
+        fun tryFormat(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?)
+            = tryFormat(provider, Locale.getDefault(Locale.Category.FORMAT), format, *args)
+
+        @JvmStatic
+        @Throws(AttackDetectedException::class)
+        fun format(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?)
+            = tryFormat(provider, locale, format, *args).orElseThrow{ throw AttackDetectedException() }
+
+        @JvmStatic
+        fun tryFormat(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?)
+            = formatEx(provider, locale, format, *args).formattedString
+
+        internal fun formatEx(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?) : FormatResult {
             val keyItem = FormatCacheItem(locale, format, args)
             return getProviderCache(provider).get(keyItem) { tryFormatImpl(provider, it) }
         }
 
-        @JvmStatic
-        @Throws(AttackDetectedException::class)
-        fun format(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?) : String =
-                tryFormat(provider, locale, format, *args).orElseThrow{ throw AttackDetectedException() }
-
-        @JvmStatic
-        fun tryFormat(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?): Optional<String> {
-            val keyItem = FormatCacheItem(locale, format, args)
-            return getProviderCache(provider).get(keyItem) { tryFormatImpl(provider, it) }
-        }
-
-        private fun getFormatAndRanges(locale : Locale, format : String, arguments : Array<out Any?>) : Pair<String, List<Range>>{
+        private fun getFormatAndRanges(locale : Locale, format : String, arguments : Array<out Any?>) : FormatAndRanges {
 
             val ranges = mutableListOf<Range>()
+            val argumentRanges = mutableListOf<Pair<Range, Int>>()
 
             val messageFormat = MessageFormat(format, locale)
 
@@ -80,7 +84,13 @@ class SafeString{
                 if(i == j){
                     j = iterator.getRunLimit(iterator.allAttributeKeys)
                     if(!iterator.attributes.isEmpty()){
-                        ranges.add(Range(i - extraShift, j - 1 - extraShift))
+
+                        val argumentIndex = iterator.attributes.filter { it.key is MessageFormat.Field }.map { it.value as Int }.firstOrNull()
+                            ?: error("Could not find argument index.")
+
+                        val range = Range(i - extraShift, j - 1 - extraShift)
+                        ranges.add(range)
+                        argumentRanges.add(Pair(range, argumentIndex))
                         safeMatcher.reset()
                         formatStatus = Status.InPlaceholder
                     }else if(i != 0){
@@ -95,6 +105,7 @@ class SafeString{
                     if(safeMatcher.matched()){
                         sb.delete(sb.length - safeMatcher.text.length, sb.length)
                         ranges.removeAt(ranges.lastIndex)
+                        argumentRanges.removeAt(argumentRanges.lastIndex)
                         extraShift += safeMatcher.text.length
                         formatStatus = Status.InFormatter
                     }
@@ -102,12 +113,20 @@ class SafeString{
                 i++
             }
 
-            return Pair(sb.toString(), ranges)
+            return FormatAndRanges(sb.toString(), ranges, argumentRanges)
         }
 
-        private fun tryFormatImpl(provider : LanguageProvider, formatItem : FormatCacheItem): Optional<String>{
+        private fun tryFormatImpl(provider : LanguageProvider, formatItem : FormatCacheItem): FormatResult{
             val formatResult = getFormatAndRanges(formatItem.locale, formatItem.format, formatItem.args)
-            return LanguageService.trySanityze(provider, formatResult.first, formatResult.second)
+            val sanitizeResult = LanguageService.trySanityze(provider, formatResult.format, formatResult.ranges)
+
+            return if(sanitizeResult.success) {
+                FormatResult.success(sanitizeResult.tokens, sanitizeResult.sanitizedText.get())
+            }else{
+                val attackArgument = formatResult.argumentRanges.find { it.first.overlaps(sanitizeResult.attackToken.get().range) }
+                        ?: error("Cannot find attack argument for attack token.")
+                FormatResult.fail(sanitizeResult.tokens, attackArgument.second)
+            }
         }
     }
 }
