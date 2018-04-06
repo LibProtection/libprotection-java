@@ -33,7 +33,8 @@ class SafeString{
 
     companion object {
 
-        private val cache = RandomizedLRUCache<FormatCacheItem, Optional<String>>(1024)
+        private val providerCaches = HashMap<LanguageProvider, RandomizedLRUCache<FormatCacheItem, Optional<String>>>()
+        private fun getProviderCache(provider: LanguageProvider) = providerCaches.getOrPut(provider) { RandomizedLRUCache(1024) }
 
         @JvmStatic
         @Throws(AttackDetectedException::class)
@@ -44,7 +45,7 @@ class SafeString{
         fun tryFormat(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?): Optional<String> {
             val locale = Locale.getDefault(Locale.Category.FORMAT)
             val keyItem = FormatCacheItem(locale, format, args)
-            return cache.get(keyItem) { tryFormatImpl(provider, it) }
+            return getProviderCache(provider).get(keyItem) { tryFormatImpl(provider, it) }
         }
 
         @JvmStatic
@@ -55,7 +56,7 @@ class SafeString{
         @JvmStatic
         fun tryFormat(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?): Optional<String> {
             val keyItem = FormatCacheItem(locale, format, args)
-            return cache.get(keyItem) { tryFormatImpl(provider, it) }
+            return getProviderCache(provider).get(keyItem) { tryFormatImpl(provider, it) }
         }
 
         private fun getFormatAndRanges(locale : Locale, format : String, arguments : Array<out Any?>) : Pair<String, List<Range>>{
