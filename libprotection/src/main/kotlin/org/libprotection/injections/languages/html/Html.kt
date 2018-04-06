@@ -147,7 +147,7 @@ object Html : AntlrLanguageProvider() {
         {
             if (tokenText.length > 2)
             {
-                tokenText = tokenText.substring(1, tokenText.length - 2)
+                tokenText = tokenText.substring(1, tokenText.length - 1)
                 offset++
             }
         }
