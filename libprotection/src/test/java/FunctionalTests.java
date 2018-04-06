@@ -12,14 +12,16 @@ import org.libprotection.injections.languages.html.Html;
 import org.libprotection.injections.languages.javascript.JavaScript;
 import org.libprotection.injections.languages.sql.Sql;
 import org.libprotection.injections.languages.url.Url;
+
+import java.io.IOException;
 import java.util.Optional;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Theories.class)
-public class FunctionalTests {
+final public class FunctionalTests {
 
     private static class DataPoint{
         LanguageProvider provider;

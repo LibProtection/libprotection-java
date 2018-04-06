@@ -5,6 +5,7 @@ import org.libprotection.injections.caching.RandomizedLRUCache
 import org.libprotection.injections.languages.LanguageProvider
 import java.text.MessageFormat
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import javax.validation.constraints.NotNull
 
 class SafeString{
@@ -34,7 +35,7 @@ class SafeString{
     companion object {
 
 
-        private val providerCaches = HashMap<LanguageProvider, RandomizedLRUCache<FormatCacheItem, FormatResult>>()
+        private val providerCaches = ConcurrentHashMap<LanguageProvider, RandomizedLRUCache<FormatCacheItem, FormatResult>>()
         private fun getProviderCache(provider: LanguageProvider) = providerCaches.getOrPut(provider) { RandomizedLRUCache(1024) }
 
         private class FormatAndRanges(val format: String, val ranges : List<Range>, val argumentRanges : List<Pair<Range, Int>>)
@@ -57,7 +58,7 @@ class SafeString{
         fun tryFormat(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?)
             = formatEx(provider, locale, format, *args).formattedString
 
-        internal fun formatEx(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?) : FormatResult {
+        fun formatEx(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?) : FormatResult {
             val keyItem = FormatCacheItem(locale, format, args)
             return getProviderCache(provider).get(keyItem) { tryFormatImpl(provider, it) }
         }

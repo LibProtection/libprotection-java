@@ -3,7 +3,7 @@ package org.libprotection.injections
 import org.libprotection.injections.languages.Token
 import java.util.*
 
-internal class FormatResult private constructor(val tokens : Array<Token>, val isAttackDetected : Boolean, val injectionPointIndex : Int, val formattedString : Optional<String>) {
+class FormatResult private constructor(val tokens : Array<Token>, val isAttackDetected : Boolean, val injectionPointIndex : Int, val formattedString : Optional<String>) {
 
     companion object {
         fun success(tokens : Array<Token>, formattedString : String) = FormatResult(tokens, false, -1, Optional.of(formattedString))
