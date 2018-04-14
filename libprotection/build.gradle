@@ -47,14 +47,4 @@ task copyGrammarFiles{
 }
 generateGrammarSource.dependsOn copyGrammarFiles
 
-task copyGrammarTestFiles{
-    doLast {
-        copy {
-            from '\\submodules\\libprotection-common\\test-cases\\format-test-cases'
-            into 'src\\test\\resources\\format-test-cases'
-        }
-    }
-}
-test.dependsOn copyGrammarTestFiles
-
 compileKotlin.dependsOn generateGrammarSource
