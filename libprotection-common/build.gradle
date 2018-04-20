@@ -1,0 +1,7 @@
+apply plugin: 'kotlin-platform-common'
+
+archivesBaseName = 'libprotection-common'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+}

@@ -28,6 +28,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.21.0.1'
 
-    compile project(":libprotection")
+    compile project(":libprotection-jvm")
 }
 

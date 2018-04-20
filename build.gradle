@@ -2,4 +2,19 @@ allprojects {
     repositories {
         mavenCentral()
     }
+    group 'org.libprotection'
+    version '1.0-SNAPSHOT'
+}
+
+buildscript {
+    ext.kotlinVersion = '1.2.40'
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
 }
