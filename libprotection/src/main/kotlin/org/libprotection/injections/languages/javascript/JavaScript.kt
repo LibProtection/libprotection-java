@@ -1,20 +1,20 @@
 package org.libprotection.injections.languages.javascript
 
-import org.libprotection.injections.languages.AntlrLanguageProvider
-import org.libprotection.injections.languages.TokenType
 import JavaScriptLexer
-import com.sun.javaws.exceptions.InvalidArgumentException
-import org.libprotection.injections.languages.Token
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.Lexer
-import org.apache.commons.lang3.StringEscapeUtils
-import java.util.*
+
+import org.libprotection.injections.languages.AntlrLanguageProvider
+import org.libprotection.injections.languages.TokenType
+import org.libprotection.injections.languages.Token
+import org.libprotection.injections.InvalidArgumentException
+import org.libprotection.injections.utils.Optional
 
 object JavaScript : AntlrLanguageProvider() {
 
     override fun trySanitize(text: String, context: Token): Optional<String> = when (context.languageProvider) {
         JavaScript -> tryJavaScriptEncode(text, context.type as JavaScriptTokenType)
-        else -> throw InvalidArgumentException(arrayOf("Unsupported JavaScript island: $context"))
+        else -> throw InvalidArgumentException("Unsupported JavaScript island: $context")
     }
 
     override fun convertAntlrTokenType(antlrTokenType: Int): TokenType = JavaScriptTokenType.fromInt(antlrTokenType)

@@ -1,11 +1,11 @@
 package org.libprotection.injections.languages.url
 
-import com.sun.javaws.exceptions.InvalidArgumentException
+import org.libprotection.injections.InvalidArgumentException
+import org.libprotection.injections.utils.Optional
 import org.libprotection.injections.languages.RegexLanguageProvider
 import org.libprotection.injections.languages.RegexRule
 import org.libprotection.injections.languages.Token
 import org.libprotection.injections.languages.TokenType
-import java.util.*
 
 object Url : RegexLanguageProvider() {
 
@@ -50,7 +50,7 @@ object Url : RegexLanguageProvider() {
 
     override fun trySanitize(text: String, context: Token): Optional<String> = when(context.languageProvider) {
         Url -> tryUrlEncode(text, context.type as UrlTokenType)
-        else -> throw InvalidArgumentException(arrayOf("Unsupported URL island: $context"))
+        else -> throw InvalidArgumentException("Unsupported URL island: $context")
     }
 
     override fun isTrivial(type: TokenType, text: String): Boolean = when(type as UrlTokenType){

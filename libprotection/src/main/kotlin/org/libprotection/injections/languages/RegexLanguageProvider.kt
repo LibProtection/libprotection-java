@@ -1,6 +1,6 @@
 package org.libprotection.injections.languages
 
-import java.util.*
+import org.libprotection.injections.utils.Stack
 
 abstract class RegexLanguageProvider : LanguageProvider() {
     protected abstract val errorTokenType: TokenType
@@ -22,23 +22,23 @@ abstract class RegexLanguageProvider : LanguageProvider() {
             {
                 val match = rule.tryMatch(currentText)
 
-                if (match.isPresent && match.get() != 0)
+                if (match.isPresent && match.value != 0)
                 {
                     isMatched = true
                     if (rule.isToken)
                     {
-                        val tokenText = currentText.substring(0, match.get())
+                        val tokenText = currentText.substring(0, match.value)
 
                         val token = createToken(rule.type, currentPosition + offset,
                                 currentPosition + offset + tokenText.length - 1, tokenText)
 
-                        currentText = currentText.substring(match.get())
-                        currentPosition += match.get()
+                        currentText = currentText.substring(match.value)
+                        currentPosition += match.value
                         res.add(token)
                     }
 
                     if (rule.isPopMode) { modeRulesStack.pop(); }
-                    if (rule.isPushMode) { modeRulesStack.push(rule.modeRules) }
+                    if (rule.isPushMode) { modeRulesStack.push(rule.modeRules!!) }
 
                     break
                 }

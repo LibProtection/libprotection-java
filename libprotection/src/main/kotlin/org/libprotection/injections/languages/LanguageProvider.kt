@@ -1,6 +1,6 @@
 package org.libprotection.injections.languages
 
-import java.util.*
+import org.libprotection.injections.utils.Optional
 
 abstract class LanguageProvider {
 

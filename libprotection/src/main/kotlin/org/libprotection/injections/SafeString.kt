@@ -3,10 +3,10 @@ package org.libprotection.injections
 import org.libprotection.injections.caching.FormatCacheItem
 import org.libprotection.injections.caching.RandomizedLRUCache
 import org.libprotection.injections.languages.LanguageProvider
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.validation.constraints.NotNull
 import org.libprotection.injections.formatting.Formatter
+import java.util.*
 
 class SafeString{
 
@@ -18,7 +18,7 @@ class SafeString{
         @JvmStatic
         @Throws(AttackDetectedException::class)
         fun format(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?)
-            = tryFormat(provider, format, *args).orElseThrow{ throw AttackDetectedException() }
+            = tryFormat(provider, format, *args).orElseThrow { throw AttackDetectedException() }
 
         @JvmStatic
         fun tryFormat(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?)
@@ -43,9 +43,9 @@ class SafeString{
             val sanitizeResult = LanguageService.trySanityze(provider, formatResult.format, formatResult.taintedRanges)
 
             return if(sanitizeResult.success) {
-                FormatResult.success(sanitizeResult.tokens, sanitizeResult.sanitizedText.get())
+                FormatResult.success(sanitizeResult.tokens, sanitizeResult.sanitizedText.value)
             }else{
-                val attackArgumentIndex = formatResult.taintedRanges.indexOfFirst{ it.overlaps(sanitizeResult.attackToken.get().range) }
+                val attackArgumentIndex = formatResult.taintedRanges.indexOfFirst{ it.overlaps(sanitizeResult.attackToken.value.range) }
                 assert(attackArgumentIndex != -1) { "Cannot find attack argument for attack token." }
                 FormatResult.fail(sanitizeResult.tokens, formatResult.associatedToRangeIndexes[attackArgumentIndex])
             }

@@ -1,7 +1,7 @@
 package org.libprotection.injections
 
 import org.libprotection.injections.languages.Token
-import java.util.*
+import org.libprotection.injections.utils.Optional
 
 class FormatResult private constructor(val tokens : Array<Token>, val isAttackDetected : Boolean, val injectionPointIndex : Int, val formattedString : Optional<String>) {
 
@@ -13,7 +13,7 @@ class FormatResult private constructor(val tokens : Array<Token>, val isAttackDe
 
     override fun hashCode(): Int {
         var result = isAttackDetected.hashCode()
-        result = 31 * result + Arrays.deepHashCode(tokens)
+        result = 31 * result + tokens.contentHashCode()
         result = 31 * result + injectionPointIndex.hashCode()
         result = 31 * result + formattedString.hashCode()
         return result
@@ -21,11 +21,12 @@ class FormatResult private constructor(val tokens : Array<Token>, val isAttackDe
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other === null) return false
+        if (this::class != other::class) return false
 
         other as FormatResult
 
-        if (!Arrays.deepEquals(tokens, other.tokens)) return false
+        if (!tokens.contentDeepEquals(other.tokens)) return false
         if (isAttackDetected != other.isAttackDetected) return false
         if (injectionPointIndex != other.injectionPointIndex) return false
         if (formattedString != other.formattedString) return false

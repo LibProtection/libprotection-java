@@ -1,13 +1,14 @@
 package org.libprotection.injections.languages.html
 
 import HTMLLexer
+import org.antlr.v4.runtime.ANTLRInputStream
+
 import org.libprotection.injections.languages.AntlrLanguageProvider
 import org.libprotection.injections.languages.IslandDto
 import org.libprotection.injections.languages.Token
 import org.libprotection.injections.languages.javascript.JavaScript
 import org.libprotection.injections.languages.url.Url
-import org.antlr.v4.runtime.ANTLRInputStream
-import java.util.*
+import org.libprotection.injections.utils.Optional
 import org.libprotection.injections.languages.TokenType
 
 object Html : AntlrLanguageProvider() {
@@ -79,7 +80,7 @@ object Html : AntlrLanguageProvider() {
                 val contextChangedRes = isContextChanged(token, state, insideScriptTag)
                 if (contextChangedRes.isPresent)
                 {
-                    val islandData = contextChangedRes.get()
+                    val islandData = contextChangedRes.value
                     val islandTokens = islandData.languageProvider.tokenize(islandData.text, islandData.offset)
                     for (islandToken in islandTokens)
                     {
@@ -161,11 +162,11 @@ object Html : AntlrLanguageProvider() {
             Html -> Optional.of(htmlEncode(text, context.type as HtmlTokenType))
             Url -> {
                 val urlSanitized = Url.trySanitize(text, context)
-                return if (urlSanitized.isPresent) Optional.of(htmlEncode(urlSanitized.get(), HtmlTokenType.AttributeValue)) else Optional.empty()
+                return if (urlSanitized.isPresent) Optional.of(htmlEncode(urlSanitized.value, HtmlTokenType.AttributeValue)) else Optional.empty()
             }
             JavaScript-> {
                 val ecmaScriptSanitized = JavaScript.trySanitize(text, context)
-                return if (ecmaScriptSanitized.isPresent) Optional.of(htmlEncode(ecmaScriptSanitized.get(), HtmlTokenType.HtmlText)) else Optional.empty()
+                return if (ecmaScriptSanitized.isPresent) Optional.of(htmlEncode(ecmaScriptSanitized.value, HtmlTokenType.HtmlText)) else Optional.empty()
             }
             else -> throw IllegalArgumentException("Unsupported HTML island: $context")
         }

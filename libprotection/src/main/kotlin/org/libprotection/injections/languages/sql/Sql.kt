@@ -1,13 +1,14 @@
 package org.libprotection.injections.languages.sql
 
 import SQLLexer
+import org.antlr.v4.runtime.ANTLRInputStream
+import org.antlr.v4.runtime.Lexer
+
 import com.sun.javaws.exceptions.InvalidArgumentException
 import org.libprotection.injections.languages.AntlrLanguageProvider
 import org.libprotection.injections.languages.Token
 import org.libprotection.injections.languages.TokenType
-import org.antlr.v4.runtime.ANTLRInputStream
-import org.antlr.v4.runtime.Lexer
-import java.util.*
+import org.libprotection.injections.utils.Optional
 
 object Sql : AntlrLanguageProvider() {
 

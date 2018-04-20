@@ -1,10 +1,10 @@
 package org.libprotection.injections.languages.filepath
 
+import org.libprotection.injections.utils.Optional
 import org.libprotection.injections.languages.RegexLanguageProvider
 import org.libprotection.injections.languages.RegexRule
 import org.libprotection.injections.languages.Token
 import org.libprotection.injections.languages.TokenType
-import java.util.*
 
 object FilePath : RegexLanguageProvider() {
 

@@ -1,3 +1,4 @@
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -12,12 +13,8 @@ import org.libprotection.injections.languages.html.Html;
 import org.libprotection.injections.languages.javascript.JavaScript;
 import org.libprotection.injections.languages.sql.Sql;
 import org.libprotection.injections.languages.url.Url;
+import org.libprotection.injections.utils.Optional;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 @RunWith(Theories.class)
@@ -82,11 +79,11 @@ final public class FunctionalTests {
             thrown.expect(AttackDetectedException.class);
             SafeString.format(dataPoint.provider, dataPoint.format, dataPoint.arguments);
         }else{
-            assertTrue(tryFormatResult.isPresent());
-            assertEquals(tryFormatResult.get(), dataPoint.result);
+            Assert.assertTrue(tryFormatResult.isPresent());
+            Assert.assertEquals(tryFormatResult.getValue(), dataPoint.result);
 
             String formatResult = SafeString.format(dataPoint.provider, dataPoint.format, dataPoint.arguments);
-            assertEquals(tryFormatResult.get(), formatResult);
+            Assert.assertEquals(tryFormatResult.getValue(), formatResult);
         }
     }
 }
