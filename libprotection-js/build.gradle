@@ -1,0 +1,48 @@
+apply plugin: 'kotlin-platform-js'
+apply plugin: 'kotlin2js'
+apply plugin: 'antlr'
+
+dependencies {
+    expectedBy project(":libprotection-common")
+
+    antlr "org.antlr:antlr4:4.5"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+}
+
+
+sourceSets {
+    generated {
+        java {
+            srcDirs = [ "${buildDir}\\generated-src\\antlr" ]
+        }
+    }
+}
+
+task copyG4{
+    doLast {
+        copy {
+            from "${rootDir}\\submodules\\libprotection-common\\grammars"
+            into "${projectDir}\\src\\main\\antlr"
+        }
+    }
+}
+
+generateGrammarSource{
+    arguments.add("-Dlanguage=JavaScript")
+}
+
+generateGrammarSource.dependsOn copyG4
+
+compileJava.dependsOn generateGrammarSource
+buildscript {
+    ext.kotlin_version = '1.2.40'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+repositories {
+    mavenCentral()
+}
