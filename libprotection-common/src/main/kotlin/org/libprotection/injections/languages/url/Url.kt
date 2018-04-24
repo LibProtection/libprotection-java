@@ -19,7 +19,7 @@ object Url : RegexLanguageProvider() {
                 RegexRule.noTokenPushMode("""[^:/?#]+:""", SchemeModeRules),
                 RegexRule.noTokenPushMode("""//[^/?#]*""", AuthorityModeRules),
                 RegexRule.noTokenPushMode("""[^?#]*""", PathModeRules),
-                RegexRule.noTokenPushMode("""?[^#]*""", QueryModeRules),
+                RegexRule.noTokenPushMode("""\?[^#]*""", QueryModeRules),
                 RegexRule.noTokenPushMode("""#.*""", FragmentModeRules)) }
 
 

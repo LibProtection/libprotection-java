@@ -11,10 +11,12 @@ JavaScriptBaseLexer = require("./lib/JavaScriptBaseLexer").JavaScriptBaseLexer;
 JavaScriptLexer = require("./lib/JavaScriptLexer").JavaScriptLexer;
 SQLLexer = require("./lib/SQLLexer").SQLLexer;
 
-encodeHtmlText = x => x;//require('htmlencode').htmlEncode;
-encodeHtmlAttribute = (a) => { console.log("encodeHtmlText --- " + a); return a; }
-encodeJavaScript = (a) => { console.log("encodeHtmlText --- " + a); return a; }
-encodeUriComponent = (a) => { console.log("encodeHtmlText --- " + a); return a; }
+const secure_filters = require('secure-filters');
+
+encodeHtmlText = secure_filters.html;
+encodeHtmlAttribute = secure_filters.html;
+encodeJavaScript = secure_filters.js;
+encodeUriComponent = secure_filters.uri;
 
 Token.prototype.getType = function() { return this.type; }
 Token.prototype.getStartIndex = function() { return this.start; }
@@ -23,9 +25,12 @@ Token.prototype.getText = function() { return this.text; }
 
 const injections = require("./libprotection-js")['libprotection-js'].org.libprotection.injections;
 
-const SafeString = injections.SafeString.Companion;
+const FilePath = injections.languages.filepath.FilePath;
 const Html = injections.languages.html.Html;
-const JavaScript = injections.languages.html.JavaScript;
+const JavaScript = injections.languages.javascript.JavaScript;
+const Sql = injections.languages.sql.Sql;
+const Url = injections.languages.url.Url;
+
 const LanguageService = injections.LanguageService.Companion;
 const Range = injections.Range;
 const FormatResult = injections.FormatResult.Companion;
@@ -50,14 +55,12 @@ function makeKtIterable(array) {
 function tryFormatEx(provider){
 
 	let arugmentsWithNoProvider = Array.prototype.slice.call(arguments, 1);
-	let keyString = JSON.stringify( { provider: Html.constructor.name, arugmentsWithNoProvider } );
+	let keyString = JSON.stringify( { provider: provider.constructor.name, arugmentsWithNoProvider } );
 
 	let cachedResult = cache.get(keyString);
 	if(cachedResult !== undefined){
 		return cachedResult;
 	}
-
-	console.log("Calculating " + keyString);
 
 	let formatResult = sf(... Array.prototype.slice.call(arguments, 1));
 
@@ -72,7 +75,7 @@ function tryFormatEx(provider){
 	}else{
 		let attackArgumentIndex = ranges.findIndex( it => it.overlaps_woksat$(sanitizeResult.attackToken.value.range) );
 		//assert.notEqual(attackArgumentIndex, -1, "Cannot find attack argument for attack token.");
-		let attackedIndex = Object.keys(args).findIndex( it => it == attackArgumentIndex );
+		let attackedIndex = Object.keys(arugmentsWithNoProvider).findIndex( it => it == attackArgumentIndex );
 		result = FormatResult.fail_7lvycu$(sanitizeResult.tokens, attackedIndex);
 	}
 
@@ -99,4 +102,4 @@ function format(provider){
 	}
 }
 
-module.exports = { format, tryFormat, Html }
+module.exports = { format, tryFormat, FilePath, Html, JavaScript, Sql, Url }
