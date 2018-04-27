@@ -17,7 +17,6 @@ dependencies {
     compile "org.apache.commons:commons-text:1.1"
     compile "commons-io:commons-io:2.5"
     compile "org.owasp.encoder:encoder:1.2.1"
-    antlr "org.antlr:antlr4:4.5"
     testCompile 'junit:junit:4.12'
 // https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
     compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.7.1'
@@ -34,16 +33,4 @@ sourceSets {
     }
 }
 
-task copyG4{
-    doLast {
-        copy {
-            from "${rootDir}\\submodules\\libprotection-common\\grammars"
-            into "${projectDir}\\src\\main\\antlr"
-        }
-    }
-}
-generateGrammarSource.dependsOn copyG4
-
-compileJava.dependsOn generateGrammarSource
-
-
+compileKotlin.dependsOn generateGrammarSource

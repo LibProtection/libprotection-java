@@ -13,3 +13,5 @@ libprotection-js/submodules
 testSite/bin/
 testSite/.settings/
 testSite/.project
+
+libprotection-common/src/main/antlr/
