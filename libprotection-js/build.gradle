@@ -11,5 +11,6 @@ generateGrammarSource{
     arguments.add("-Dlanguage=JavaScript")
 }
 
-compileKotlin2Js.dependsOn generateGrammarSource
+jar.enabled = false
 
+compileKotlin2Js.dependsOn generateGrammarSource

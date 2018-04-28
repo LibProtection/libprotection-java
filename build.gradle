@@ -3,7 +3,7 @@ allprojects {
         mavenCentral()
     }
     group 'org.libprotection'
-    version '1.0-SNAPSHOT'
+    version '0.0.1'
 }
 
 buildscript {
@@ -21,6 +21,7 @@ buildscript {
 
 subprojects {
     if(name.endsWith("common")) return
+    if(name.startsWith("testSite")) return
 
     apply plugin: 'antlr'
 
