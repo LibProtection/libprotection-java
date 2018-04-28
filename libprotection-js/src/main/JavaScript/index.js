@@ -1,4 +1,4 @@
-kotlin = require("./lib/kotlin");
+kotlin = require("kotlin");
 
 'use strict'
 
@@ -23,7 +23,7 @@ Token.prototype.getStartIndex = function() { return this.start; }
 Token.prototype.getStopIndex = function() { return this.stop; }
 Token.prototype.getText = function() { return this.text; }
 
-const injections = require("./libprotection-js")['libprotection-js'].org.libprotection.injections;
+const injections = require("./lib/libprotection-js")['libprotection-js'].org.libprotection.injections;
 
 const FilePath = injections.languages.filepath.FilePath;
 const Html = injections.languages.html.Html;
@@ -35,7 +35,7 @@ const LanguageService = injections.LanguageService.Companion;
 const Range = injections.Range;
 const FormatResult = injections.FormatResult.Companion;
 const AttackDetectedException = injections.AttackDetectedException;
-const sf = require("sf");
+const sf = require("./lib/sf");
 const assert = require('assert');
 
 const LRU = require("lru-cache")
@@ -45,7 +45,7 @@ const LRU = require("lru-cache")
 
 function makeKtIterable(array) {
     var nextIndex = 0;
-
+    
     return {
 	  hasNext: function() { return array.length > nextIndex; },
       next : function() { return array[nextIndex++]; }
@@ -53,15 +53,15 @@ function makeKtIterable(array) {
 }
 
 function tryFormatEx(provider){
-
+	
 	let arugmentsWithNoProvider = Array.prototype.slice.call(arguments, 1);
 	let keyString = JSON.stringify( { provider: provider.constructor.name, arugmentsWithNoProvider } );
-
+	
 	let cachedResult = cache.get(keyString);
 	if(cachedResult !== undefined){
 		return cachedResult;
 	}
-
+	
 	let formatResult = sf(... Array.prototype.slice.call(arguments, 1));
 
 	let ranges = formatResult.taintedRanges.map( it => new Range(it.lowerBound, it.upperBound) );
@@ -78,9 +78,9 @@ function tryFormatEx(provider){
 		let attackedIndex = Object.keys(arugmentsWithNoProvider).findIndex( it => it == attackArgumentIndex );
 		result = FormatResult.fail_7lvycu$(sanitizeResult.tokens, attackedIndex);
 	}
-
+	
 	cache.set(keyString, result);
-
+	
 	return result;
 }
 

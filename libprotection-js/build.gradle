@@ -13,4 +13,30 @@ generateGrammarSource{
 
 jar.enabled = false
 
-compileKotlin2Js.dependsOn generateGrammarSource
+task copyJSSources {
+    doLast {
+        copy {
+            from "$projectDir\\src\\main\\JavaScript"
+            into "$buildDir\\package-src"
+        }
+        copy {
+            from "$buildDir\\generated-src\\antlr\\main\\"
+            into "$buildDir\\package-src\\lib"
+            include "*.js"
+        }
+        copy {
+            from "$buildDir\\classes\\kotlin\\main"
+            into "$buildDir\\package-src\\lib"
+            include "*.js"
+        }
+    }
+}
+
+copyJSSources.dependsOn {
+    compileKotlin2Js
+    generateGrammarSource
+}
+
+testClasses.dependsOn copyJSSources
+build.dependsOn copyJSSources
+
