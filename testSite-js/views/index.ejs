@@ -16,97 +16,104 @@
 
 <body>
 	<form>
-		<div>
+		<div class="container">
+
 			<% include partials/header %>
 
-			<% if (!ids.includes(id)) { %>
-				<div class="alert alert-dismissible alert-warning">
-					<button type="button" class="close" data-dismiss="alert">&times;</button>
-					<strong>Unknown language provider: <%= id %></strong>
-				</div>
-			<% } else { %>
-				<div style="width:100%">
-					<div style="margin-top: 20px">
-						<h5>Vulnerable operation:</h5>
-						<%= exampleOperation %>
-					</div>
-					<div style="display: table; width: 100%; margin-top: 20px">
-						<div style="padding-right: 10px; display: table-cell; width: 50%">
-							<h5>Format string:</h5>
-							<input class="form-control" type="text" value="<%= format %>" ID="format" <% inputsAreDisabled ? "disabled=\"disabled\"" : "" %> />
-						</div>
-						<div style="padding-left: 10px; display: table-cell; width: 50%">
-							<h5>Arguments <small class="text-muted">(one per line):</small></h5>
-							<textarea class="form-control" rows="5" ID="parameters"><%= parameters %></textarea>
-						</div>
-					</div>
-					<div style="text-align: right; margin-top: 20px">
-						<input style="width: 160px; display: inline-block" class="form-control" type="button" id="button" value="Try format" />
-					</div>
-				</div>
-				<% if(result.Exception === null) { %>
-				
-					<div style="margin-top: 20px">
-						<h5>Format result:</h5>
-						<%= result.FormatResult %>
-					</div>
-					<div style="margin-top: 20px">
-						<h5>Vulnerable operation result:</h5>
-						<% if(!result.OperationResult) { %>
-							<span class="text-warning">None</span>
-						<% } else { %>
-							<span class="text-success" id="operationResult"><%= result.OperationResult %></span><!--!!!!!!!!!!!!!! -> -   -->
-						<% } %>
-					</div>
-				<% } else if (result.Exception.constructor.name === "AttackDetectedException") { %>
-						<div class="alert alert-dismissible alert-danger">
-							<button type="button" class="close" data-dismiss="alert">&times;</button>
-							<strong>Attack detected!</strong> Vulnerable operation was not executed
-						</div>
-				<% } else { %>
-						<div class="alert alert-dismissible alert-warning">
-							<button type="button" class="close" data-dismiss="alert">&times;</button>
-							<strong>Exception occured: <%= result.Exception %></strong>
-						</div>
-				<% } %>
-
-				<script>
-					button.onclick = function() {
-						 window.location =
-							 "?Id=" +
-							 encodeURIComponent("<%= id %>") +
-							 <% if (!inputsAreDisabled) { %> 
-							 "&Format=" + encodeURIComponent(window.format.value) +
-							 <% } %>
-							 "&Parameters=" + encodeURIComponent(window.parameters.value);
-					}
-				</script>
-				<hr />
-			<% } %>
+			<div class="content">
 			
-			<div>
-				<script>
-					document.addEventListener("DOMContentLoaded", function () {
-						window.grammarSelectorId.value = "<%= id %>";
-						window.grammarSelectorId.onchange = function () {
-							window.location = "?Id=" + encodeURIComponent(window.grammarSelectorId.value);
-						}
-					});
-				</script>
+				<% if (!ids.includes(id)) { %>
+					<div class="alert alert-dismissible alert-warning">
+						<button type="button" class="close" data-dismiss="alert">&times;</button>
+						<strong>Unknown language provider: <%= id %></strong>
+					</div>
+				<% } else { %>
+					<div style="width:100%">
+						<div style="margin-top: 20px">
+							<h5>Vulnerable operation:</h5>
+							<%= exampleOperation %>
+						</div>
+						<div style="display: table; width: 100%; margin-top: 20px">
+							<div style="padding-right: 10px; display: table-cell; width: 50%">
+								<h5>Format string:</h5>
+								<input class="form-control" type="text" value="<%= format %>" ID="format" <% inputsAreDisabled ? "disabled=\"disabled\"" : "" %> />
+							</div>
+							<div style="padding-left: 10px; display: table-cell; width: 50%">
+								<h5>Arguments <small class="text-muted">(one per line):</small></h5>
+								<textarea class="form-control" rows="5" ID="parameters"><%= parameters %></textarea>
+							</div>
+						</div>
+						<div style="text-align: right; margin-top: 20px">
+							<input style="width: 160px; display: inline-block" class="form-control" type="button" id="button" value="Try format" />
+						</div>
+					</div>
+					<% if(result.Exception === null) { %>
+					
+						<div style="margin-top: 20px">
+							<h5>Format result:</h5>
+							<%= result.FormatResult %>
+						</div>
+						<div style="margin-top: 20px">
+							<h5>Vulnerable operation result:</h5>
+							<% if(!result.OperationResult) { %>
+								<span class="text-warning">None</span>
+							<% } else { %>
+								<span class="text-success" id="operationResult"><%= result.OperationResult %></span><!--!!!!!!!!!!!!!! -> -   -->
+							<% } %>
+						</div>
+					<% } else if (result.Exception.constructor.name === "AttackDetectedException") { %>
+							<div class="alert alert-dismissible alert-danger">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>Attack detected!</strong> Vulnerable operation was not executed
+							</div>
+					<% } else { %>
+							<div class="alert alert-dismissible alert-warning">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>Exception occured: <%= result.Exception %></strong>
+							</div>
+					<% } %>
 
-				<div id="exampleFormsId">
 					<script>
-						let option;
-						<% ids.forEach( item => { %>
-							option = document.createElement("option");
-							option.text = "<%= item %>";
-							grammarSelectorId.add(option);
-						<% }); %>
+						button.onclick = function() {
+							 window.location =
+								 "?Id=" +
+								 encodeURIComponent("<%= id %>") +
+								 <% if (!inputsAreDisabled) { %> 
+								 "&Format=" + encodeURIComponent(window.format.value) +
+								 <% } %>
+								 "&Parameters=" + encodeURIComponent(window.parameters.value);
+						}
 					</script>
+					<hr />
+				<% } %>
+				
+				<div>
+					<script>
+						document.addEventListener("DOMContentLoaded", function () {
+							window.grammarSelectorId.value = "<%= id %>";
+							window.grammarSelectorId.onchange = function () {
+								window.location = "?Id=" + encodeURIComponent(window.grammarSelectorId.value);
+							}
+						});
+					</script>
+
+					<div id="exampleFormsId">
+						<script>
+							let option;
+							<% ids.forEach( item => { %>
+								option = document.createElement("option");
+								option.text = "<%= item %>";
+								grammarSelectorId.add(option);
+							<% }); %>
+						</script>
+					</div>
+				
 				</div>
+				
+				<% include partials/footer %>
+			
 			</div>
 			
-			<% include partials/footer %>
 		</div>
 	</form>
 </body>
