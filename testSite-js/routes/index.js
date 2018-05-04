@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const sqlite = require("sqlite3");
+const fs = require('fs');
 
 const LP = require("../lib/libprotection/index.js")
 
@@ -50,17 +51,44 @@ const examples = {
         LP.format.bind(null, LP.Sql),
         "SELECT * FROM myTable WHERE id = {0} AND myColumn = '{1}'",
         "1\r\nvalue1",
-        sqlRequestTagBuilder)
-	
+        sqlRequestTagBuilder),
+	Url: Example(
+		"Uses the given URL on the client side to load and execute an external JavaScript code.",
+        LP.format.bind(null, LP.Url),
+        "{0}/{1}",
+        "Assets\r\njsFile.js",
+        s => Promise.resolve("<script src=\"" + s + "\"></script>")),
+		
+    FilePath: Example(
+		"Reads content of the given local file on the server side and outputs it.",
+        LP.format.bind(null, LP.FilePath),
+        path.resolve("assets") + path.sep + "{0}",
+        "textFile.txt",
+        filePathTagBuilder)
 };
+
+function filePathTagBuilder(request) {
+	
+	if (!request) { return Promise.resolve(""); }
+	
+	return new Promise((resolve, reject) => {
+		fs.readFile(request, 'utf8', (fileErr, data) => {
+			if(fileErr) { 
+				reject(fileErr);
+			}else{
+				resolve(data);
+			}
+		});
+	});
+}
 
 //	"start": "node --inspect-brk ./bin/www"
 function sqlRequestTagBuilder(request) {
 	
-	if (!request) { return ""; }
+	if (!request) { return Promise.resolve(""); }
 
 	const db = new sqlite.Database(path.resolve("assets", "Database.sqlite"), sqlite.OPEN_READONLY, (openErr) => {
-		if(openErr !== null) return Promise.reject(openErr);
+		if(openErr) return Promise.reject(openErr);
 	});
 	
 	return new Promise((resolve, reject) => {
