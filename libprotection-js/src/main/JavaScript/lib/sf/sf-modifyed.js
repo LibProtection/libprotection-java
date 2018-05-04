@@ -562,11 +562,21 @@ function sf(formatString) {
         }
       }
 
+	  let isSafe = false;
+	  
       specTokenLoc = spec.indexOf(':');
       var fieldName, formatSpec;
       if (specTokenLoc > 0) {
         fieldName = spec.substr(0, specTokenLoc);
         formatSpec = spec.substr(specTokenLoc + 1);
+		
+		if(formatSpec.endsWith(",safe")){
+			formatSpec = formatSpec.substr(0, formatSpec.length - ",safe".length)
+			isSafe = true;
+		}else if(formatSpec === "safe"){
+			formatSpec = null;
+			isSafe = true;
+		}
       } else {
         fieldName = spec;
         formatSpec = null;
@@ -586,7 +596,10 @@ function sf(formatString) {
       } else {
         result += align(formatObject(val, formatSpec), alignVal);
       }
-	  taintedRanges.push( {lowerBound: lowerBound, upperBound: result.length - 1 } );
+	  
+	  if(!isSafe){
+		  taintedRanges.push( {lowerBound: lowerBound, upperBound: result.length - 1 } );
+	  }
     } else {
       result += formatString[i++];
     }
