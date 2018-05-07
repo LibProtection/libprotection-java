@@ -1,5 +1,6 @@
 apply plugin: 'kotlin-platform-js'
 apply plugin: 'kotlin2js'
+apply plugin: 'com.moowork.node'
 
 dependencies {
     expectedBy project(":libprotection-common")
@@ -30,11 +31,26 @@ task copyJSSources {
             include "*.js"
         }
     }
+    dependsOn compileKotlin2Js
+    dependsOn generateGrammarSource
 }
 
-copyJSSources.dependsOn compileKotlin2Js
-copyJSSources.dependsOn generateGrammarSource
+test.dependsOn copyJSSources
 
-testClasses.dependsOn copyJSSources
-build.dependsOn copyJSSources
+//Testing
+node {
+    nodeModulesDir = file("${project.buildDir}\\package-src-test")
+}
 
+task copyToTestDirectory{
+    doLast {
+        copy {
+            from "$buildDir\\package-src"
+            into "${project.buildDir}\\package-src-test"
+        }
+    }
+    dependsOn copyJSSources
+}
+npm_install.dependsOn copyToTestDirectory
+npm_test.dependsOn npm_install
+test.dependsOn npm_test

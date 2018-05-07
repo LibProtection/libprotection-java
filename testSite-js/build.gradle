@@ -14,10 +14,7 @@ task copyLPSources {
             into "$projectDir\\lib\\libprotection"
         }
     }
+    dependsOn project(":libprotection-js").getTasksByName("copyJSSources", false)
 }
 
-copyLPSources.dependsOn project(":libprotection-js").getTasksByName("copyJSSources", false)
-
-testClasses.dependsOn copyLPSources
-build.dependsOn copyLPSources
-
+test.dependsOn copyLPSources
