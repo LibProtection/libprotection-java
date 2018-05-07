@@ -16,3 +16,5 @@ testSite/.project
 
 libprotection-common/src/main/antlr/
 testSite-jvm/.settings/
+
+testSite-js/lib

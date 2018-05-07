@@ -32,10 +32,8 @@ task copyJSSources {
     }
 }
 
-copyJSSources.dependsOn {
-    compileKotlin2Js
-    generateGrammarSource
-}
+copyJSSources.dependsOn compileKotlin2Js
+copyJSSources.dependsOn generateGrammarSource
 
 testClasses.dependsOn copyJSSources
 build.dependsOn copyJSSources
