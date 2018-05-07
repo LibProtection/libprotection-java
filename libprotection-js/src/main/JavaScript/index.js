@@ -102,4 +102,4 @@ function format(provider){
 	}
 }
 
-module.exports = { format, tryFormat, FilePath, Html, JavaScript, Sql, Url }
+module.exports = { format, tryFormat, FilePath, Html, JavaScript, Sql, Url, AttackDetectedException }

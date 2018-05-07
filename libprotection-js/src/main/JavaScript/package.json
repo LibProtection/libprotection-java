@@ -7,7 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nodeunit test"
   },
   "author": "Libprotection Team",
   "license": "MIT",
@@ -19,6 +19,7 @@
     "antlr4": "^4.7.1",
     "kotlin": "^1.2.40",
     "lru-cache": "^4.1.2",
+    "nodeunit": "^0.11.2",
     "secure-filters": "^1.1.0"
   }
 }

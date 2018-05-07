@@ -570,10 +570,10 @@ function sf(formatString) {
         fieldName = spec.substr(0, specTokenLoc);
         formatSpec = spec.substr(specTokenLoc + 1);
 		
-		if(formatSpec.endsWith(",safe")){
+		if(formatSpec.toLowerCase().endsWith(",safe")){
 			formatSpec = formatSpec.substr(0, formatSpec.length - ",safe".length)
 			isSafe = true;
-		}else if(formatSpec === "safe"){
+		}else if(formatSpec.toLowerCase() === "safe"){
 			formatSpec = null;
 			isSafe = true;
 		}
