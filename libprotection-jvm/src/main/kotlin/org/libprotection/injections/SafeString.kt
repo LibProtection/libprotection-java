@@ -16,7 +16,7 @@ class SafeString{
         private fun getProviderCache(provider: LanguageProvider) = providerCaches.getOrPut(provider) { RandomizedLRUCache(1024) }
 
         @JvmStatic
-        //@Throws(AttackDetectedException::class.java)
+        @Throws(AttackDetectedException::class)
         fun format(@NotNull provider : LanguageProvider, @NotNull format : String, vararg args : Any?)
             = tryFormat(provider, format, *args).orElseThrow { throw AttackDetectedException() }
 
@@ -25,7 +25,7 @@ class SafeString{
             = tryFormat(provider, Locale.getDefault(Locale.Category.FORMAT), format, *args)
 
         @JvmStatic
-        //@Throws(AttackDetectedException::class)
+        @Throws(AttackDetectedException::class)
         fun format(@NotNull provider : LanguageProvider, @NotNull locale : Locale, @NotNull format : String, vararg args : Any?)
             = tryFormat(provider, locale, format, *args).orElseThrow{ throw AttackDetectedException() }
 
