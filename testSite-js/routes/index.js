@@ -6,6 +6,8 @@ const fs = require('fs');
 
 const LP = require("../lib/libprotection/index.js")
 
+const replaceAll = (str, search, replacement) => str.replace(new RegExp(search, 'g'), replacement);
+
 function Example(operation, formatFunc, format, parameters, tagBuilder) {
 	return {
 		get Operation() { return operation; },
@@ -35,8 +37,8 @@ const examples = {
 	Html: Example(
 		"Renders the given HTML markup on the client side.",
 		LP.format.bind(null, LP.Html),
-		"<a href='{0}' onclick='alert(\"{1}\");return false'>{2}</a>",
-		"Default.aspx\r\nHello from embedded JavaScript code!\r\nThis site's home page",
+		"<a href=\'{0}\' onclick=\'alert(\"{1}\");return false\'>{2}</a>",
+		"Default.aspx\r\nHello from embedded JavaScript code!\r\nThis site\'s home page",
 		s => Promise.resolve(s)
 	),
 	JavaScript: Example(
@@ -82,7 +84,6 @@ function filePathTagBuilder(request) {
 	});
 }
 
-//	"start": "node --inspect-brk ./bin/www"
 function sqlRequestTagBuilder(request) {
 	
 	if (!request) { return Promise.resolve(""); }
@@ -126,12 +127,16 @@ function getLowerCasedProperty(obj, key){
 }
 
 async function getResultsFor(example, format, parameters) {
-	
+
 	let result;
+	
+	let replacedNewLines = replaceAll(parameters, "\r\n", "\n");
+	replacedNewLines = replaceAll(replacedNewLines, "\r", "\n");
+	
 	try{
 		let formatResult = example.FormatFunc(
 			format,
-			... parameters.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+			... replacedNewLines.split("\n")
 		);
 
 		result = Result(formatResult, await example.TagBuilder(formatResult), null);

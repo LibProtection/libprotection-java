@@ -18,3 +18,4 @@ libprotection-common/src/main/antlr/
 testSite-jvm/.settings/
 
 testSite-js/lib
+testSite-js/node_modules

@@ -58,7 +58,7 @@
 							<% if(!result.OperationResult) { %>
 								<span class="text-warning">None</span>
 							<% } else { %>
-								<span class="text-success" id="operationResult"><%= result.OperationResult %></span><!--!!!!!!!!!!!!!! -> -   -->
+								<span class="text-success" id="operationResult"><%- result.OperationResult %></span>
 							<% } %>
 						</div>
 					<% } else if (result.Exception.constructor.name === "AttackDetectedException") { %>
