@@ -49,7 +49,7 @@ final public class FormatCasesTest {
         FormatResult formatResult = SafeString.Companion.formatEx(
                 TestCase.getProviderByString(testCase.LanguageProvider),
                 Locale.getDefault(Locale.Category.FORMAT),
-                testCase.Format.replace("'", "''"),
+                testCase.Format,
                 (Object[])testCase.Arguments);
 
         assertEquals(formatResult, testCase.Result);

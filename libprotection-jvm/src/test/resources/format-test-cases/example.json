@@ -1,7 +1,7 @@
 {  
    "Name":"html",
    "LanguageProvider":"Html",
-   "Format":"<a href='{0}' onclick='alert(\"{1}\");return false'>{2}</a>",
+   "Format":"<a href=''{0}'' onclick=''alert(\"{1}\");return false''>{2}</a>",
    "Arguments":[  
       "Default.aspx",
       "Hello from embedded JavaScript code!",
