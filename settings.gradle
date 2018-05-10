@@ -1,1 +1,7 @@
-include 'libprotection', 'testSite'
+rootProject.name = 'libprotection-java'
+
+include 'libprotection-common'
+include 'libprotection-jvm'
+include 'libprotection-js'
+include 'testSite-jvm'
+include 'testSite-js'

@@ -1,0 +1,56 @@
+apply plugin: 'kotlin-platform-js'
+apply plugin: 'kotlin2js'
+apply plugin: 'com.moowork.node'
+
+dependencies {
+    expectedBy project(":libprotection-common")
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+}
+
+generateGrammarSource{
+    arguments.add("-Dlanguage=JavaScript")
+}
+
+jar.enabled = false
+
+task copyJSSources {
+    doLast {
+        copy {
+            from "$projectDir\\src\\main\\JavaScript"
+            into "$buildDir\\package-src"
+        }
+        copy {
+            from "$buildDir\\generated-src\\antlr\\main\\"
+            into "$buildDir\\package-src\\lib"
+            include "*.js"
+        }
+        copy {
+            from "$buildDir\\classes\\kotlin\\main"
+            into "$buildDir\\package-src\\lib"
+            include "*.js"
+        }
+    }
+    dependsOn compileKotlin2Js
+    dependsOn generateGrammarSource
+}
+
+test.dependsOn copyJSSources
+
+//Testing
+node {
+    nodeModulesDir = file("${project.buildDir}\\package-src-test")
+}
+
+task copyToTestDirectory{
+    doLast {
+        copy {
+            from "$buildDir\\package-src"
+            into "${project.buildDir}\\package-src-test"
+        }
+    }
+    dependsOn copyJSSources
+}
+npm_install.dependsOn copyToTestDirectory
+npm_test.dependsOn npm_install
+test.dependsOn npm_test

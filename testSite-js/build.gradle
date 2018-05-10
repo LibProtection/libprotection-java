@@ -1,0 +1,20 @@
+apply plugin: 'kotlin-platform-js'
+
+dependencies {
+    compile project(":libprotection-js")
+}
+
+
+jar.enabled = false
+
+task copyLPSources {
+    doLast {
+        copy {
+            from "$rootDir\\libprotection-js\\build\\package-src"
+            into "$projectDir\\lib\\libprotection"
+        }
+    }
+    dependsOn project(":libprotection-js").getTasksByName("copyJSSources", false)
+}
+
+test.dependsOn copyLPSources

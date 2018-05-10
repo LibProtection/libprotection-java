@@ -1,0 +1,25 @@
+{
+  "name": "libprotection-js",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "nodeunit test"
+  },
+  "author": "Libprotection Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LibProtection/libprotection-java"
+  },
+  "dependencies": {
+    "antlr4": "^4.7.1",
+    "kotlin": "^1.2.41",
+    "lru-cache": "^4.1.2",
+    "nodeunit": "^0.11.2",
+    "secure-filters": "^1.1.0"
+  }
+}

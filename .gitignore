@@ -1,11 +1,21 @@
+.idea/*
 */.idea/*
 *.iml
 out/
 build/
 .gradle/
-libprotection/src/test/resources/tokenization-test-cases
-libprotection/src/main/antlr
+libprotection-jvm/src/main/antlr
+libprotection-jvm/submodules
+
+libprotection-js/src/main/antlr
+libprotection-js/submodules
 
 testSite/bin/
 testSite/.settings/
 testSite/.project
+
+libprotection-common/src/main/antlr/
+testSite-jvm/.settings/
+
+testSite-js/lib
+testSite-js/node_modules

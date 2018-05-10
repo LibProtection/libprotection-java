@@ -2,4 +2,42 @@ allprojects {
     repositories {
         mavenCentral()
     }
+    group 'org.libprotection'
+    version '0.0.1'
+}
+
+buildscript {
+    ext.kotlinVersion = '1.2.41'
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
+    }
+}
+
+subprojects {
+    if(name.endsWith("common")) return
+    if(name.startsWith("testSite")) return
+
+    apply plugin: 'antlr'
+
+    dependencies {
+        antlr "org.antlr:antlr4:4.5"
+    }
+
+    task copyG4 {
+        doLast {
+            copy {
+                from "${rootDir}\\submodules\\libprotection-common\\grammars"
+                into "${projectDir}\\src\\main\\antlr"
+            }
+        }
+    }
+
+    generateGrammarSource.dependsOn copyG4
 }
