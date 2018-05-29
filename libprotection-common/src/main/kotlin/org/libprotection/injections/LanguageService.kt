@@ -11,7 +11,7 @@ internal class LanguageService{
 
     companion object {
 
-        private fun String.substring(range : Range) = substring(range.lowerBound, range.upperBound + 1)
+        private fun String.substring(range : Range) = substring(range.lowerBound, range.upperBound)
 
         fun trySanityze(languageProvider : LanguageProvider, text : String, taintedRanges : List<Range>) : SanitizeResult {
 
@@ -38,8 +38,8 @@ internal class LanguageService{
                 sanitizedBuilder.append(text, positionAtText, positionAtText + charsToAppend)
                 val lowerBound = sanitizedBuilder.length
                 sanitizedBuilder.append(fragments[range])
-                sanitizedRanges.add(Range(lowerBound, sanitizedBuilder.length - 1))
-                positionAtText = range.upperBound + 1
+                sanitizedRanges.add(Range(lowerBound, sanitizedBuilder.length))
+                positionAtText = range.upperBound
             }
 
             if (positionAtText < text.length){

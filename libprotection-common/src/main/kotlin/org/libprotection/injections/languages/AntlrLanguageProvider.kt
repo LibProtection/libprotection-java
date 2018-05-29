@@ -15,7 +15,7 @@ abstract class AntlrLanguageProvider : LanguageProvider() {
             val token = createToken(
                     convertAntlrTokenType(antlrToken.getType()),
                     antlrToken.getStartIndex() + offset,
-                    antlrToken.getStopIndex() + offset, antlrToken.getText())
+                    antlrToken.getStopIndex() + offset + 1, antlrToken.getText())
 
             res.add(token)
 

@@ -30,7 +30,7 @@ abstract class RegexLanguageProvider : LanguageProvider() {
                         val tokenText = currentText.substring(0, match.value)
 
                         val token = createToken(rule.type, currentPosition + offset,
-                                currentPosition + offset + tokenText.length - 1, tokenText)
+                                currentPosition + offset + tokenText.length, tokenText)
 
                         currentText = currentText.substring(match.value)
                         currentPosition += match.value
@@ -50,7 +50,7 @@ abstract class RegexLanguageProvider : LanguageProvider() {
                 val token = createToken(
                         errorTokenType,
                         currentPosition + offset,
-                        currentPosition + offset,
+                        currentPosition + offset + 1,
                         text[0].toString())
 
                 currentText = currentText.substring(1)

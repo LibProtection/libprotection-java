@@ -598,7 +598,7 @@ function sf(formatString) {
       }
 	  
 	  if(!isSafe){
-		  taintedRanges.push( {lowerBound: lowerBound, upperBound: result.length - 1 } );
+		  taintedRanges.push( {lowerBound: lowerBound, upperBound: result.length } );
 	  }
     } else {
       result += formatString[i++];
