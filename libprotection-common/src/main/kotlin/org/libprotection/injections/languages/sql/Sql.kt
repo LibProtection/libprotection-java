@@ -36,7 +36,7 @@ object Sql : AntlrLanguageProvider() {
     }
 
     private fun trySqlEncode(text : String, tokenType : SqlTokenType) = when(tokenType) {
-            SqlTokenType.StringLiteral -> Optional.of(text.replace("''", "'").replace("'", "''"))
+            SqlTokenType.StringLiteral -> Optional.of(text.replace("'", "''"))
             else -> Optional.empty()
     }
 }
