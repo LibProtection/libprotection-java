@@ -17,8 +17,6 @@ object Sql : AntlrLanguageProvider() {
 
     override fun isTrivial(type: TokenType, text: String): Boolean = when(type as SqlTokenType){
         SqlTokenType.Space,
-        SqlTokenType.CommentInput,
-        SqlTokenType.LineComment,
         SqlTokenType.NullLiteral,
         SqlTokenType.FilesizeLiteral,
         SqlTokenType.StartNationalStringLiteral,
