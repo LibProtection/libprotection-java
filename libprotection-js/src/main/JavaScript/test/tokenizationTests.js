@@ -25,7 +25,7 @@ function tester(test, filename){
 	const compareResult = {
 		IsAttackDetected: result.isAttackDetected,
 		InjectionPointIndex: result.injectionPointIndex,
-		FormattedString: result.formattedString.isPresent ? result.formattedString.value : null,
+		FormattedString: result.formattedString.constructor.name === "Some" ? result.formattedString.value : null,
 		Tokens: result.tokens.map(convertToken)
 	};
 	

@@ -3,7 +3,7 @@ package org.libprotection.injections.languages.sql
 import org.libprotection.injections.languages.AntlrLanguageProvider
 import org.libprotection.injections.languages.Token
 import org.libprotection.injections.languages.TokenType
-import org.libprotection.injections.utils.Optional
+import org.libprotection.injections.utils.*
 
 import antlr4Lexer
 import antlr4InputStream
@@ -28,13 +28,13 @@ object Sql : AntlrLanguageProvider() {
         else -> false
     }
 
-    override fun trySanitize(text: String, context: Token): Optional<String> = when(context.languageProvider){
+    override fun trySanitize(text: String, context: Token): MayBe<String> = when(context.languageProvider){
         Sql -> trySqlEncode(text, context.type as SqlTokenType)
         else -> throw IllegalArgumentException("Unsupported SQL island: $context")
     }
 
     private fun trySqlEncode(text : String, tokenType : SqlTokenType) = when(tokenType) {
-            SqlTokenType.StringLiteral -> Optional.of(text.replace("'", "''"))
-            else -> Optional.empty()
+            SqlTokenType.StringLiteral -> Some(text.replace("'", "''"))
+            else -> None
     }
 }

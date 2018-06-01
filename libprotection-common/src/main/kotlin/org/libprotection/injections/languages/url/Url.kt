@@ -1,6 +1,6 @@
 package org.libprotection.injections.languages.url
 
-import org.libprotection.injections.utils.Optional
+import org.libprotection.injections.utils.*
 import org.libprotection.injections.languages.RegexLanguageProvider
 import org.libprotection.injections.languages.RegexRule
 import org.libprotection.injections.languages.Token
@@ -48,7 +48,7 @@ object Url : RegexLanguageProvider() {
             RegexRule.token("#", UrlTokenType.Separator),
             RegexRule.tokenPopMode("[^#]*", UrlTokenType.Fragment))
 
-    override fun trySanitize(text: String, context: Token): Optional<String> = when(context.languageProvider) {
+    override fun trySanitize(text: String, context: Token): MayBe<String> = when(context.languageProvider) {
         Url -> tryUrlEncode(text, context.type as UrlTokenType)
         else -> throw IllegalArgumentException("Unsupported URL island: $context")
     }
@@ -60,7 +60,7 @@ object Url : RegexLanguageProvider() {
         else -> false
     }
 
-    private fun tryUrlEncode(text : String, tokenType : UrlTokenType) : Optional<String> = when(tokenType) {
+    private fun tryUrlEncode(text : String, tokenType : UrlTokenType) : MayBe<String> = when(tokenType) {
         UrlTokenType.PathEntry -> {
             val fragments = text.split('/').toTypedArray()
             for (i in 0 until fragments.count())
@@ -69,11 +69,11 @@ object Url : RegexLanguageProvider() {
                     fragments[i] = encodeUriComponent(fragments[i])
                 }
             }
-            Optional.of(fragments.joinToString("/"))
+            Some(fragments.joinToString("/"))
         }
         UrlTokenType.QueryEntry,
-        UrlTokenType.Fragment -> Optional.of(encodeUriComponent(text))
-        else -> Optional.empty()
+        UrlTokenType.Fragment -> Some(encodeUriComponent(text))
+        else -> None
     }
 
 

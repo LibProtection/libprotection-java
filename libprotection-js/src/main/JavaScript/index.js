@@ -35,6 +35,8 @@ const LanguageService = injections.LanguageService.Companion;
 const Range = injections.Range;
 const FormatResult = injections.FormatResult.Companion;
 const AttackDetectedException = injections.AttackDetectedException;
+const SanitizeResultSuccess = injections.LanguageService.SanitizeResult.Success;
+const SanitizeResultFailed = injections.LanguageService.SanitizeResult.Failed;
 const sf = require("./lib/sf");
 const assert = require('assert');
 
@@ -45,7 +47,7 @@ const LRU = require("lru-cache")
 
 function makeKtIterable(array) {
     var nextIndex = 0;
-    
+
     return {
 	  hasNext: function() { return array.length > nextIndex; },
       next : function() { return array[nextIndex++]; }
@@ -53,15 +55,15 @@ function makeKtIterable(array) {
 }
 
 function tryFormatEx(provider){
-	
+
 	let arugmentsWithNoProvider = Array.prototype.slice.call(arguments, 1);
 	let keyString = JSON.stringify( { provider: provider.constructor.name, arugmentsWithNoProvider } );
-	
+
 	let cachedResult = cache.get(keyString);
 	if(cachedResult !== undefined){
 		return cachedResult;
 	}
-	
+
 	let formatResult = sf(... Array.prototype.slice.call(arguments, 1));
 
 	let ranges = formatResult.taintedRanges.map( it => new Range(it.lowerBound, it.upperBound) );
@@ -70,10 +72,10 @@ function tryFormatEx(provider){
 	let sanitizeResult = LanguageService.trySanityze_5in3ik$(provider, formatResult.format, ranges);
 
 	let result;
-	if(sanitizeResult.success) {
-		result = FormatResult.success_56j766$(sanitizeResult.tokens, sanitizeResult.sanitizedText.value)
+	if(sanitizeResult instanceof SanitizeResultSuccess) {
+		result = FormatResult.success_56j766$(sanitizeResult.tokens, sanitizeResult.sanitizedText)
 	}else{
-		let attackArgumentIndex = ranges.findIndex( it => it.overlaps_woksat$(sanitizeResult.attackToken.value.range) );
+		let attackArgumentIndex = ranges.findIndex( it => it.overlaps_woksat$(sanitizeResult.attackToken.range) );
 		//assert.notEqual(attackArgumentIndex, -1, "Cannot find attack argument for attack token.");
 		let attackedIndex = Object.keys(arugmentsWithNoProvider).findIndex( it => it == attackArgumentIndex );
 		result = FormatResult.fail_7lvycu$(sanitizeResult.tokens, attackedIndex);

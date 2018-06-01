@@ -5,7 +5,7 @@ import org.libprotection.injections.languages.IslandDto
 import org.libprotection.injections.languages.Token
 import org.libprotection.injections.languages.javascript.JavaScript
 import org.libprotection.injections.languages.url.Url
-import org.libprotection.injections.utils.Optional
+import org.libprotection.injections.utils.*
 import org.libprotection.injections.languages.TokenType
 import antlr4HTMLLexer
 import antlr4InputStream
@@ -78,8 +78,8 @@ object Html : AntlrLanguageProvider() {
                 }
 
                 val contextChangedRes = isContextChanged(token, state, insideScriptTag)
-                if (contextChangedRes.isPresent)
-                {
+
+                if(contextChangedRes is Some){
                     val islandData = contextChangedRes.value
                     val islandTokens = islandData.languageProvider.tokenize(islandData.text, islandData.offset)
                     for (islandToken in islandTokens)
@@ -87,24 +87,22 @@ object Html : AntlrLanguageProvider() {
                         res.add(islandToken)
                     }
                 }
-                else
-                {
-                    res.add(token)
-                }
+                else res.add(token)
+
             }
         }
         return res
     }
 
 
-    private fun isContextChanged(htmlToken : Token, context : HtmlTokenizerState, insideScriptTag : Boolean) : Optional<IslandDto>
+    private fun isContextChanged(htmlToken : Token, context : HtmlTokenizerState, insideScriptTag : Boolean) : MayBe<IslandDto>
     {
         when (context)
         {
             HtmlTokenizerState.EventValue -> {
                 val (islandText, offset) = trimQuotes(htmlToken)
                 if (!islandText.isEmpty()){
-                    return Optional.of(IslandDto(JavaScript, offset, islandText))
+                    return Some(IslandDto(JavaScript, offset, islandText))
                 }
             }
 
@@ -112,7 +110,7 @@ object Html : AntlrLanguageProvider() {
                 val (islandText, offset) = trimQuotes(htmlToken)
                 if (!islandText.isEmpty())
                 {
-                    return Optional.of(IslandDto(Url, offset, islandText))
+                    return Some(IslandDto(Url, offset, islandText))
                 }
             }
             else -> {
@@ -120,7 +118,7 @@ object Html : AntlrLanguageProvider() {
                 if (insideScriptTag) {
                     when(htmlTokenType){
                         HtmlTokenType.HtmlText -> {
-                            return Optional.of(IslandDto(JavaScript, htmlToken.range.lowerBound, htmlToken.text))
+                            return Some(IslandDto(JavaScript, htmlToken.range.lowerBound, htmlToken.text))
                         }
                         else -> {}
                     }
@@ -128,7 +126,7 @@ object Html : AntlrLanguageProvider() {
             }
         }
 
-        return Optional.empty()
+        return None
     }
 
     /**
@@ -156,17 +154,17 @@ object Html : AntlrLanguageProvider() {
     }
 
 
-    override fun trySanitize(text: String, context: Token): Optional<String> {
+    override fun trySanitize(text: String, context: Token): MayBe<String> {
         return when (context.languageProvider)
         {
-            Html -> Optional.of(htmlEncode(text, context.type as HtmlTokenType))
+            Html -> Some(htmlEncode(text, context.type as HtmlTokenType))
             Url -> {
                 val urlSanitized = Url.trySanitize(text, context)
-                return if (urlSanitized.isPresent) Optional.of(htmlEncode(urlSanitized.value, HtmlTokenType.AttributeValue)) else Optional.empty()
+                return if (urlSanitized is Some) Some(htmlEncode(urlSanitized.value, HtmlTokenType.AttributeValue)) else None
             }
             JavaScript-> {
                 val ecmaScriptSanitized = JavaScript.trySanitize(text, context)
-                return if (ecmaScriptSanitized.isPresent) Optional.of(htmlEncode(ecmaScriptSanitized.value, HtmlTokenType.HtmlText)) else Optional.empty()
+                return if (ecmaScriptSanitized is Some) Some(htmlEncode(ecmaScriptSanitized.value, HtmlTokenType.HtmlText)) else None
             }
             else -> throw IllegalArgumentException("Unsupported HTML island: $context")
         }
