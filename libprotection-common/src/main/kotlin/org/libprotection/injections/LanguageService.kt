@@ -3,15 +3,18 @@ package org.libprotection.injections
 import org.libprotection.injections.languages.LanguageProvider
 import org.libprotection.injections.languages.Token
 import org.libprotection.injections.languages.TokenScope
-import org.libprotection.injections.utils.Optional
+import org.libprotection.injections.utils.*
 
 internal class LanguageService{
 
-    internal class SanitizeResult(val success : Boolean, val tokens : Array<Token>, val sanitizedText : Optional<String>, val attackToken : Optional<Token>)
+    internal sealed class SanitizeResult(val tokens : Array<Token>){
+        class Success(tokens : Array<Token>, val sanitizedText : String) : SanitizeResult(tokens)
+        class Failed(tokens : Array<Token>, val attackToken : Token) : SanitizeResult(tokens)
+    }
 
     companion object {
 
-        private fun String.substring(range : Range) = substring(range.lowerBound, range.upperBound + 1)
+        private fun String.substring(range : Range) = substring(range.lowerBound, range.upperBound)
 
         fun trySanityze(languageProvider : LanguageProvider, text : String, taintedRanges : List<Range>) : SanitizeResult {
 
@@ -38,8 +41,8 @@ internal class LanguageService{
                 sanitizedBuilder.append(text, positionAtText, positionAtText + charsToAppend)
                 val lowerBound = sanitizedBuilder.length
                 sanitizedBuilder.append(fragments[range])
-                sanitizedRanges.add(Range(lowerBound, sanitizedBuilder.length - 1))
-                positionAtText = range.upperBound + 1
+                sanitizedRanges.add(Range(lowerBound, sanitizedBuilder.length))
+                positionAtText = range.upperBound
             }
 
             if (positionAtText < text.length){
@@ -49,14 +52,15 @@ internal class LanguageService{
             val sanitizedText = sanitizedBuilder.toString()
 
             val sanitizeResult = validate(languageProvider, sanitizedText, sanitizedRanges)
+
             return if(sanitizeResult.first){
-                SanitizeResult(true, tokens.toTypedArray(), Optional.of(sanitizedText), Optional.empty())
-            }else{
-                SanitizeResult(false, tokens.toTypedArray(), Optional.empty(), sanitizeResult.second)
+                SanitizeResult.Success( tokens.toTypedArray(), sanitizedText)
+            }else {
+                SanitizeResult.Failed(tokens.toTypedArray(), (sanitizeResult.second as Some).value)
             }
         }
 
-        fun validate(languageProvider : LanguageProvider, text : String, ranges : List<Range>) : Pair<Boolean, Optional<Token>> {
+        fun validate(languageProvider : LanguageProvider, text : String, ranges : List<Range>) : Pair<Boolean, MayBe<Token>> {
             val tokens = languageProvider.tokenize(text)
 
             var scopesCount = 0
@@ -66,10 +70,10 @@ internal class LanguageService{
                 scopesCount++
                 allTrivial = allTrivial and scope.isTrivial
                 if ((scope.tokens.count() > 1 ||  scopesCount > 1) && !allTrivial) {
-                    return Pair(false, Optional.of(scope.tokens.find { !it.isTrivial }!!))
+                    return Pair(false, Some(scope.tokens.find { !it.isTrivial }!!))
                 }
             }
-            return Pair(true, Optional.empty())
+            return Pair(true, None)
         }
 
         private fun getTokensScopes(tokens : Iterable<Token>, ranges : List<Range>) : Iterable<TokenScope>

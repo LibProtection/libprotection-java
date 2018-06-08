@@ -1,6 +1,7 @@
 package org.libprotection.injections.languages
 
 import org.libprotection.injections.utils.Stack
+import org.libprotection.injections.utils.*
 
 abstract class RegexLanguageProvider : LanguageProvider() {
     protected abstract val errorTokenType: TokenType
@@ -22,7 +23,7 @@ abstract class RegexLanguageProvider : LanguageProvider() {
             {
                 val match = rule.tryMatch(currentText)
 
-                if (match.isPresent && match.value != 0)
+                if (match is Some && match.value != 0)
                 {
                     isMatched = true
                     if (rule.isToken)
@@ -30,7 +31,7 @@ abstract class RegexLanguageProvider : LanguageProvider() {
                         val tokenText = currentText.substring(0, match.value)
 
                         val token = createToken(rule.type, currentPosition + offset,
-                                currentPosition + offset + tokenText.length - 1, tokenText)
+                                currentPosition + offset + tokenText.length, tokenText)
 
                         currentText = currentText.substring(match.value)
                         currentPosition += match.value
@@ -50,7 +51,7 @@ abstract class RegexLanguageProvider : LanguageProvider() {
                 val token = createToken(
                         errorTokenType,
                         currentPosition + offset,
-                        currentPosition + offset,
+                        currentPosition + offset + 1,
                         text[0].toString())
 
                 currentText = currentText.substring(1)

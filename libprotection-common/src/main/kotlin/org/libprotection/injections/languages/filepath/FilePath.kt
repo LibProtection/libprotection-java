@@ -1,6 +1,6 @@
 package org.libprotection.injections.languages.filepath
 
-import org.libprotection.injections.utils.Optional
+import org.libprotection.injections.utils.*
 import org.libprotection.injections.languages.RegexLanguageProvider
 import org.libprotection.injections.languages.RegexRule
 import org.libprotection.injections.languages.Token
@@ -20,7 +20,7 @@ object FilePath : RegexLanguageProvider() {
             RegexRule.token("[$disallowedSymbols]", FilePathTokenType.DisallowedSymbol)
     )
 
-    override fun trySanitize(text: String, context: Token): Optional<String> = Optional.empty()
+    override fun trySanitize(text: String, context: Token): MayBe<String> = None
 
     override fun isTrivial(type: TokenType, text: String) = type == FilePathTokenType.FSEntryName && !text.contains("..")
 }

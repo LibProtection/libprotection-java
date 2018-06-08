@@ -1,6 +1,6 @@
 package org.libprotection.injections.languages
 
-import org.libprotection.injections.utils.Optional
+import org.libprotection.injections.utils.*
 import kotlin.text.Regex
 
 class RegexRule(regex: String) {
@@ -20,14 +20,9 @@ class RegexRule(regex: String) {
 
     private val regex : Regex = Regex("^$regex")
 
-    fun tryMatch(text : String) : Optional<Int> {
-
+    fun tryMatch(text : String) : MayBe<Int> {
         val matchResult = regex.find(text)
-        return if(matchResult != null){
-            Optional.of(matchResult.value.length)
-        }else{
-            Optional.empty()
-        }
+        return if(matchResult != null) Some(matchResult.value.length) else None
     }
 
     companion object {

@@ -13,7 +13,7 @@ import org.libprotection.injections.languages.html.Html;
 import org.libprotection.injections.languages.javascript.JavaScript;
 import org.libprotection.injections.languages.sql.Sql;
 import org.libprotection.injections.languages.url.Url;
-import org.libprotection.injections.utils.Optional;
+import org.libprotection.injections.utils.*;
 
 import static org.junit.Assert.assertFalse;
 
@@ -71,19 +71,22 @@ final public class FunctionalTests {
     @Theory
     public void FunctionalTest(final DataPoint dataPoint) throws AttackDetectedException{
 
-        Optional<String> tryFormatResult = SafeString.tryFormat(dataPoint.provider, dataPoint.format, dataPoint.arguments);
+        MayBe<String> tryFormatResult = SafeString.tryFormat(dataPoint.provider, dataPoint.format, dataPoint.arguments);
 
         if(dataPoint.isAttack()){
-            assertFalse(tryFormatResult.isPresent());
+            assertFalse(tryFormatResult instanceof Some);
 
             thrown.expect(AttackDetectedException.class);
             SafeString.format(dataPoint.provider, dataPoint.format, dataPoint.arguments);
         }else{
-            Assert.assertTrue(tryFormatResult.isPresent());
-            Assert.assertEquals(tryFormatResult.getValue(), dataPoint.result);
+            Assert.assertTrue(tryFormatResult instanceof Some);
+
+            Some successFormatResult = (Some) tryFormatResult;
+
+            Assert.assertEquals(successFormatResult.getValue(), dataPoint.result);
 
             String formatResult = SafeString.format(dataPoint.provider, dataPoint.format, dataPoint.arguments);
-            Assert.assertEquals(tryFormatResult.getValue(), formatResult);
+            Assert.assertEquals(successFormatResult.getValue(), formatResult);
         }
     }
 }

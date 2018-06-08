@@ -6,6 +6,7 @@ import org.libprotection.injections.languages.LanguageProvider
 import java.util.concurrent.ConcurrentHashMap
 import javax.validation.constraints.NotNull
 import org.libprotection.injections.formatting.Formatter
+import org.libprotection.injections.utils.orElseThrow
 import java.util.*
 
 class SafeString{
@@ -42,12 +43,14 @@ class SafeString{
             val formatResult = Formatter.format(formatItem.locale, formatItem.format, formatItem.args)
             val sanitizeResult = LanguageService.trySanityze(provider, formatResult.format, formatResult.taintedRanges)
 
-            return if(sanitizeResult.success) {
-                FormatResult.success(sanitizeResult.tokens, sanitizeResult.sanitizedText.value)
-            }else{
-                val attackArgumentIndex = formatResult.taintedRanges.indexOfFirst{ it.overlaps(sanitizeResult.attackToken.value.range) }
-                assert(attackArgumentIndex != -1) { "Cannot find attack argument for attack token." }
-                FormatResult.fail(sanitizeResult.tokens, formatResult.associatedToRangeIndexes[attackArgumentIndex])
+            return when(sanitizeResult){
+                is LanguageService.SanitizeResult.Success ->
+                    FormatResult.success(sanitizeResult.tokens, sanitizeResult.sanitizedText)
+                is LanguageService.SanitizeResult.Failed -> {
+                    val attackArgumentIndex = formatResult.taintedRanges.indexOfFirst{ it.overlaps(sanitizeResult.attackToken.range) }
+                    assert(attackArgumentIndex != -1) { "Cannot find attack argument for attack token." }
+                    FormatResult.fail(sanitizeResult.tokens, formatResult.associatedToRangeIndexes[attackArgumentIndex])
+                }
             }
         }
     }

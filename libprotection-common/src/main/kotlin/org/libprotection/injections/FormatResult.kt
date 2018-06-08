@@ -1,14 +1,14 @@
 package org.libprotection.injections
 
 import org.libprotection.injections.languages.Token
-import org.libprotection.injections.utils.Optional
+import org.libprotection.injections.utils.*
 
-class FormatResult private constructor(val tokens : Array<Token>, val isAttackDetected : Boolean, val injectionPointIndex : Int, val formattedString : Optional<String>) {
+class FormatResult private constructor(val tokens : Array<Token>, val isAttackDetected : Boolean, val injectionPointIndex : Int, val formattedString : MayBe<String>) {
 
     companion object {
-        fun success(tokens : Array<Token>, formattedString : String) = FormatResult(tokens, false, -1, Optional.of(formattedString))
+        fun success(tokens : Array<Token>, formattedString : String) = FormatResult(tokens, false, -1, Some(formattedString))
 
-        fun fail(tokens : Array<Token>, injectionPointIndex : Int) = FormatResult(tokens, true, injectionPointIndex, Optional.empty())
+        fun fail(tokens : Array<Token>, injectionPointIndex : Int) = FormatResult(tokens, true, injectionPointIndex, None)
     }
 
     override fun hashCode(): Int {

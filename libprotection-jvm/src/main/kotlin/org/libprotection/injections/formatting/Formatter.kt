@@ -57,7 +57,7 @@ internal class Formatter{
                         val argumentIndex = iterator.attributes.filter { it.key is MessageFormat.Field }.map { it.value as Int }.firstOrNull()
                                 ?: error("Could not find argument index.")
 
-                        val range = Range(i - extraShift, j - 1 - extraShift)
+                        val range = Range(i - extraShift, j - extraShift)
                         taintedRanges.add(range)
                         associatedToRangeIndexes.add(argumentIndex)
                         safeMatcher.reset()
