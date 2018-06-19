@@ -1,0 +1,32 @@
+language: kotlin
+install: true
+
+jdk:
+  - oraclejdk8
+
+os:
+  - linux
+
+git:
+  submodules: false
+
+platform:
+  - jvm
+  - js
+
+matrix:
+  include:
+    - platform: jvm
+      env:
+        - PLATFORM=jvm
+    - platform: js 
+      env:
+        - PLATFORM=js
+
+before_script:
+  - git submodule update --init --recursive
+
+script:
+  - ./gradlew :libprotection-${PLATFORM}:jar --info
+  - ./gradlew :libprotection-${PLATFORM}:test --info
+
